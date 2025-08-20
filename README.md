@@ -1,10 +1,10 @@
-# KTU Ultimate Calculator 🚀
+# ![KTU Calculator 🚀](https://ktucalculator.netlify.app/)
 
 ![Project Banner](Screenshot/SS1.png) <!-- Placeholder -->
 
 An advanced, feature-rich, and beautifully designed calculator for KTU students to effortlessly calculate their SGPA, CGPA, and Internal Marks. Built with a "nerd-tech" aesthetic for a delightful user experience.
 
-**[Live Demo](https://your-live-demo-link.com)** <!-- Placeholder -->
+**[Live Demo](https://ktucalculator.netlify.app/)** <!-- Placeholder -->
 
 ---
 
