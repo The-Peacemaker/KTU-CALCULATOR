@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#22d3ee"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="#07111b"/>
+  <!-- open book -->
+  <path d="M10 34c6-4 12-6 21-6s15 2 21 6v10c-6-4-12-6-21-6S16 40 10 44V34z" fill="#0ea5e9" opacity="0.08"/>
+  <path d="M32 28l-16 6v12c6-4 12-6 16-6s10 2 16 6V34L32 28z" fill="url(#g)" opacity="0.18"/>
+  <!-- graduation cap -->
+  <g transform="translate(12,6) scale(0.9)">
+    <path d="M20 26L2 18l18-8 18 8-18 8z" fill="#0ea5e9"/>
+    <path d="M20 30v6" stroke="#7c3aed" stroke-width="2" stroke-linecap="round"/>
+    <path d="M20 30c6-1 10-4 12-6" stroke="#22d3ee" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>
+    <circle cx="20" cy="27" r="1.6" fill="#7c3aed"/>
+  </g>
+</svg>

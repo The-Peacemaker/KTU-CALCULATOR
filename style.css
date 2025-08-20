@@ -1,0 +1,205 @@
+:root {
+    --accent: #06b6d4; /* cyan-500 */
+    --accent-amber: #f59e0b; /* amber-500 */
+    --bg: #0b1220; /* deep bluish for blueprint vibe */
+    --g1: #22d3ee; /* cyan-400 */
+    --g2: #0ea5e9; /* sky-500 */
+    --g3: #a855f7; /* violet-500 */
+    --g4: #14b8a6; /* teal-500 */
+    --my: 50%;
+    --text: #e6f3f8;
+    --muted: #94a3b8;
+    --panel: rgba(255,255,255,0.04);
+    --glass: rgba(255,255,255,0.03);
+    --particle-fill: #a0dcff;
+    --particle-stroke: #78b4ff;
+    --canvas-center: rgba(10,14,20,0.7);
+    --canvas-edge: rgba(3,6,10,0.95);
+}
+
+/* Global fonts */
+body {
+    font-family: 'Exo 2', 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Noto Sans', 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg);
+    color-scheme: dark;
+    /* Subtle engineering grid background */
+    background-image:
+        radial-gradient(transparent 1px, rgba(255,255,255,0.02) 1px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 24px),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 24px);
+    background-size: 200px 200px, 24px 24px, 24px 24px;
+    background-position: center center, 0 0, 0 0;
+}
+
+/* Theme transitions */
+/* limit to interactive elements to avoid layout jank */
+button, .tab-btn, .grade-select, .internal-input, select { transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease, box-shadow 160ms ease, transform 120ms ease; }
+
+/* Light theme removed */
+
+/* Full screen particle canvas */
+#bg-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(10,14,20,0.7) 0%, rgba(3,6,10,0.95) 70%);
+}
+
+/* Make main content float above background */
+.container {
+    position: relative;
+    z-index: 2;
+    color: var(--text);
+    max-width: 1200px;
+}
+
+/* Title and headings: tech/engineering aesthetic */
+h1, h2, h3 {
+    font-family: 'Exo 2', 'Inter', system-ui, sans-serif;
+    letter-spacing: 0.02em;
+}
+
+/* Nerd title: use monospaced developer fonts for a technical header look */
+.nerd-title {
+    font-family: 'Fira Code', 'Space Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 18px rgba(78, 179, 255, 0.12);
+}
+
+/* Metric numbers: monospaced nerd font */
+#cgpa-display, #credits-display, #internal-total {
+    font-family: 'Space Mono', 'Fira Code', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 0 12px rgba(6, 182, 212, 0.25);
+}
+
+/* Tab buttons: crisp, nerdy vibe */
+.tab-btn {
+    font-family: 'Exo 2', 'Inter', system-ui, sans-serif;
+    letter-spacing: 0.02em;
+    position: relative;
+    isolation: isolate;
+}
+.tab-btn:hover {
+    text-shadow: 0 0 8px rgba(6, 182, 212, 0.25);
+}
+.tab-btn.border-cyan-500::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -2px; height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-amber));
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.35));
+    z-index: -1;
+}
+
+/* Glassmorphic nav container */
+.glass-nav {
+    background: radial-gradient(120% 120% at 100% 0%, rgba(6, 182, 212, 0.08), rgba(245, 158, 11, 0.05) 30%, rgba(255,255,255,0.04) 60%) , rgba(255,255,255,0.03);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 20px 40px rgba(0,0,0,0.25);
+}
+
+/* Animated active indicator */
+.tab-indicator {
+    position: absolute;
+    top: 6px;
+    bottom: 6px;
+    left: 6px;
+    width: calc(50% - 7px);
+    border-radius: 0.75rem; /* match rounded-xl */
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(245, 158, 11, 0.2));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 8px 24px rgba(6,182,212,0.25);
+    backdrop-filter: blur(16px) saturate(140%);
+    transition: transform 300ms cubic-bezier(.2,.8,.2,1), width 300ms cubic-bezier(.2,.8,.2,1), left 300ms cubic-bezier(.2,.8,.2,1);
+    pointer-events: none;
+}
+
+/* Active tab styles */
+.tab-btn.is-active {
+    color: var(--text) !important;
+    text-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+}
+
+/* Inputs and selects: focus glow */
+.internal-input, .grade-select {
+    font-family: 'Space Mono', 'Fira Code', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace;
+    transition: box-shadow 200ms ease, transform 120ms ease;
+}
+.internal-input:focus, .grade-select:focus {
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.35), 0 0 0 6px rgba(6, 182, 212, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Buttons: subtle glow */
+button#reset-button-cgpa {
+    font-family: 'Exo 2', 'Inter', system-ui, sans-serif;
+    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.25);
+}
+button#reset-button-cgpa:hover {
+    box-shadow: 0 10px 28px rgba(220, 38, 38, 0.35);
+}
+
+/* Panels: thin cyan outline for blueprint feel */
+.bg-gray-800 {
+    outline: 1px solid rgba(6, 182, 212, 0.12);
+    background: var(--panel) !important;
+}
+
+/* Selection color */
+::selection {
+    background: rgba(6, 182, 212, 0.35);
+    color: #e6f9fc;
+}
+/* Custom scrollbar for better aesthetics */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0e1729;
+}
+::-webkit-scrollbar-thumb {
+    background: #2b3a55;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #3d537b;
+}
+/* Simple transition for tab content */
+.tab-content {
+    display: none;
+}
+.tab-content.active {
+    display: block;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    #interactive-bg { animation: none; }
+}
+
+/* Tab focus/keyboard accessibility */
+.tab-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(6,182,212,0.14), 0 0 0 6px rgba(6,182,212,0.06);
+    border-radius: 0.6rem;
+}
+
+/* Semester card hover polish */
+.semester-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 40px rgba(2,6,23,0.6);
+}
+
+/* Disabled select visual for zero-credit subjects */
+.select-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Small screens tweak */
+@media (max-width: 640px) {
+    .glass-nav { padding: 0.25rem; }
+    .tab-indicator { display: none; }
+}
