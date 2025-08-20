@@ -1,6 +1,6 @@
 # KTU Ultimate Calculator 🚀
 
-![Project Banner](screenshots/banner.png) <!-- Placeholder -->
+![Project Banner](Screenshot/SS1.png) <!-- Placeholder -->
 
 An advanced, feature-rich, and beautifully designed calculator for KTU students to effortlessly calculate their SGPA, CGPA, and Internal Marks. Built with a "nerd-tech" aesthetic for a delightful user experience.
 
@@ -37,7 +37,7 @@ An advanced, feature-rich, and beautifully designed calculator for KTU students 
 
 | CGPA Calculator | Internal Mark Calculator |
 | :-------------: | :----------------------: |
-| ![CGPA Calculator Screenshot](screenshots/cgpa-calculator.png) | ![Internal Mark Calculator Screenshot](screenshots/internal-calculator.png) |
+| ![CGPA Calculator Screenshot](Screenshot/SS1.png) | ![Internal Mark Calculator Screenshot](Screenshot/SS2.png) |
 
 ---
 
