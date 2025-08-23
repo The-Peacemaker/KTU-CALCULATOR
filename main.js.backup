@@ -1,0 +1,1854 @@
+// --- SHARED DATA & CONSTANTS ---
+// NCode Written and wibe coded by Benedict Chacko Mathew
+const gradePoints = { 'S': 10, 'A+': 9, 'A': 8.5, 'B+': 8, 'B': 7.5, 'C+': 7, 'C': 6.5, 'D': 6, 'P': 5.5 };
+const gradeOptions = ['', 'S', 'A+', 'A', 'B+', 'B', 'C+', 'C', 'D', 'P'];
+
+// Department-specific semester data extracted from ktugpa.web.app (static snapshot)
+const departmentSemesters = {
+    cs: [
+        { name: 'SEMESTER 1', subjects: [
+            { code: '', name: 'LINEAR ALGEBRA AND CALCULUS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 2', subjects: [
+            { code: '', name: 'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+            { code: '', name: 'PROGRAMMING IN C', credit: 4 },
+        ]},
+        { name: 'SEMESTER 3', subjects: [
+            { code: '', name: 'DISCRETE MATHEMATICAL STRUCTURES', credit: 4 },
+            { code: '', name: 'DATA STRUCTURES', credit: 4 },
+            { code: '', name: 'LOGIC SYSTEM DESIGN', credit: 4 },
+            { code: '', name: 'OBJECT ORIENTED PROGRAMMING USING JAVA', credit: 4 },
+            { code: '', name: 'DESIGN & ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'SUSTAINABLE ENGINEERING', credit: 0 },
+            { code: '', name: 'DATA STRUCTURES LAB', credit: 2 },
+            { code: '', name: 'OBJECT ORIENTED PROGRAMMING LAB (IN JAVA)', credit: 2 },
+        ]},
+        { name: 'SEMESTER 4', subjects: [
+            { code: '', name: 'GRAPH THEORY', credit: 4 },
+            { code: '', name: 'COMPUTER ORGANIZATION AND ARCHITECTURE', credit: 4 },
+            { code: '', name: 'DATABASE MANAGEMENT SYSTEMS', credit: 4 },
+            { code: '', name: 'OPERATING SYSTEMS', credit: 4 },
+            { code: '', name: 'DESIGN & ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'CONSTITUTION OF INDIA', credit: 0 },
+            { code: '', name: 'DIGITAL LAB', credit: 2 },
+            { code: '', name: 'OPERATING SYSTEMS LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 5', subjects: [
+            { code: '', name: 'FORMAL LANGUAGES AND AUTOMATA THEORY', credit: 4 },
+            { code: '', name: 'COMPUTER NETWORKS', credit: 4 },
+            { code: '', name: 'SYSTEM SOFTWARE', credit: 4 },
+            { code: '', name: 'MICROPROCESSORS AND MICROCONTROLLERS', credit: 4 },
+            { code: '', name: 'MANAGEMENT OF SOFTWARE SYSTEMS', credit: 3 },
+            { code: '', name: 'DISASTER MANAGEMENT', credit: 0 },
+            { code: '', name: 'SYSTEM SOFTWARE AND MICROPROCESSORS LAB', credit: 2 },
+            { code: '', name: 'DATABASE MANAGEMENT SYSTEMS LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 6', subjects: [
+            { code: '', name: 'COMPILER DESIGN', credit: 4 },
+            { code: '', name: 'COMPUTER GRAPHICS AND IMAGE PROCESSING', credit: 4 },
+            { code: '', name: 'ALGORITHM ANALYSIS AND DESIGN', credit: 4 },
+            { code: '', name: 'PROGRAM ELECTIVE I', credit: 3 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS & FOREIGN TRADE', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE WORK', credit: 1 },
+            { code: '', name: 'NETWORKING LAB', credit: 2 },
+            { code: '', name: 'MINIPROJECT', credit: 2 },
+        ]},
+        { name: 'SEMESTER 7', subjects: [
+            { code: '', name: 'ARTIFICIAL INTELLIGENCE', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE II', credit: 3 },
+            { code: '', name: 'OPEN ELECTIVE', credit: 3 },
+            { code: '', name: 'INDUSTRIAL SAFETY ENGINEERING', credit: 0 },
+            { code: '', name: 'COMPILER LAB', credit: 2 },
+            { code: '', name: 'SEMINAR', credit: 2 },
+            { code: '', name: 'PROJECT PHASE I', credit: 2 },
+        ]},
+        { name: 'SEMESTER 8', subjects: [
+            { code: '', name: 'DISTRIBUTED COMPUTING', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE III', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE IV', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE V', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE VIVA', credit: 1 },
+            { code: '', name: 'PROJECT PHASE II', credit: 4 },
+        ]},
+    ],
+    ce: [
+        { name: 'SEMESTER 1', subjects: [
+            { code: '', name: 'LINEAR ALGEBRA AND CALCULUS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS B / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 2', subjects: [
+            { code: '', name: 'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS B / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+            { code: '', name: 'PROGRAMMING IN C', credit: 4 },
+        ]},
+        { name: 'SEMESTER 3', subjects: [
+            { code: '', name: 'PARTIAL DIFFERENTIAL EQUATION AND COMPLEX ANALYSIS', credit: 4 },
+            { code: '', name: 'MECHANICS OF SOLIDS', credit: 4 },
+            { code: '', name: 'FLUID MECHANICS & HYDRAULICS', credit: 4 },
+            { code: '', name: 'SURVEYING & GEOMATICS', credit: 4 },
+            { code: '', name: 'DESIGN & ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'SUSTAINABLE ENGINEERING', credit: 0 },
+            { code: '', name: 'CIVIL ENGINEERING PLANNING & DRAFTING LAB', credit: 2 },
+            { code: '', name: 'SURVEY LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 4', subjects: [
+            { code: '', name: 'PROBABILITY, STATISTICS AND NUMERICAL METHODS', credit: 4 },
+            { code: '', name: 'ENGINEERING GEOLOGY', credit: 4 },
+            { code: '', name: 'GEOTECHNICAL ENGINEERING – I', credit: 4 },
+            { code: '', name: 'TRANSPORTATION ENGINEERING', credit: 4 },
+            { code: '', name: 'DESIGN & ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'CONSTITUTION OF INDIA', credit: 0 },
+            { code: '', name: 'MATERIAL TESTING LAB – I', credit: 2 },
+            { code: '', name: 'FLUID MECHANICS LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 5', subjects: [
+            { code: '', name: 'STRUCTURAL ANALYSIS – I', credit: 4 },
+            { code: '', name: 'DESIGN OF CONCRETE STRUCTURES', credit: 4 },
+            { code: '', name: 'GEOTECHNICAL ENGINEERING – II', credit: 4 },
+            { code: '', name: 'HYDROLOGY & WATER RESOURCES ENGINEERING', credit: 4 },
+            { code: '', name: 'CONSTRUCTION TECHNOLOGY & MANAGEMENT', credit: 3 },
+            { code: '', name: 'DISASTER MANAGEMENT', credit: 0 },
+            { code: '', name: 'MATERIAL TESTING LAB – II', credit: 2 },
+            { code: '', name: 'GEOTECHNICAL ENGINEERING LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 6', subjects: [
+            { code: '', name: 'STRUCTURAL ANALYSIS – II', credit: 4 },
+            { code: '', name: 'ENVIRONMENTAL ENGINEERING', credit: 4 },
+            { code: '', name: 'DESIGN OF HYDRAULIC STRUCTURES', credit: 4 },
+            { code: '', name: 'PROGRAM ELECTIVE I', credit: 3 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS & FOREIGN TRADE', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE WORK', credit: 1 },
+            { code: '', name: 'TRANSPORTATION ENGINEERING LAB', credit: 2 },
+            { code: '', name: 'CIVIL ENGINEERING SOFTWARE LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 7', subjects: [
+            { code: '', name: 'DESIGN OF STEEL STRUCTURES', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE II', credit: 3 },
+            { code: '', name: 'OPEN ELECTIVE', credit: 3 },
+            { code: '', name: 'INDUSTRIAL SAFETY ENGINEERING', credit: 0 },
+            { code: '', name: 'ENVIRONMENTAL ENGG LAB', credit: 2 },
+            { code: '', name: 'SEMINAR', credit: 2 },
+            { code: '', name: 'PROJECT PHASE I', credit: 2 },
+        ]},
+        { name: 'SEMESTER 8', subjects: [
+            { code: '', name: 'QUANTITY SURVEYING & VALUATION', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE III', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE IV', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE V', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE VIVA VOCE', credit: 1 },
+            { code: '', name: 'PROJECT PHASE II', credit: 4 },
+        ]},
+    ],
+    ad: [
+        { name: 'SEMESTER 1', subjects: [
+            { code: '', name: 'LINEAR ALGEBRA AND CALCULUS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 2', subjects: [
+            { code: '', name: 'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'PROGRAMMING IN C', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 3', subjects: [
+            { code: '', name: 'DISCRETE MATHEMATICAL STRUCTURES', credit: 4 },
+            { code: '', name: 'DATA STRUCTURES', credit: 4 },
+            { code: '', name: 'LOGIC SYSTEM DESIGN', credit: 4 },
+            { code: '', name: 'OBJECT ORIENTED PROGRAMMING USING JAVA', credit: 4 },
+            { code: '', name: 'DESIGN & ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'SUSTAINABLE ENGINEERING', credit: 0 },
+            { code: '', name: 'DATA STRUCTURES LAB', credit: 2 },
+            { code: '', name: 'OBJECT ORIENTED PROGRAMMING LAB (IN JAVA)', credit: 2 },
+        ]},
+        { name: 'SEMESTER 4', subjects: [
+            { code: '', name: 'PROBABILITY AND STATISTICAL MODELING', credit: 4 },
+            { code: '', name: 'COMPUTER ORGANISATION AND ARCHITECTURE', credit: 4 },
+            { code: '', name: 'DATABASE MANAGEMENT SYSTEMS', credit: 4 },
+            { code: '', name: 'OPERATING SYSTEMS', credit: 4 },
+            { code: '', name: 'DESIGN & ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'CONSTITUTION OF INDIA', credit: 0 },
+            { code: '', name: 'PYTHON AND STATISTICAL MODELING LAB', credit: 2 },
+            { code: '', name: 'OPERATING SYSTEMS LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 5', subjects: [
+            { code: '', name: 'FOUNDATIONS OF DATA SCIENCE', credit: 4 },
+            { code: '', name: 'COMPUTER NETWORKS', credit: 4 },
+            { code: '', name: 'INTRODUCTION TO MACHINE LEARNING', credit: 4 },
+            { code: '', name: 'INTRODUCTION TO ARTIFICIAL INTELLIGENCE', credit: 4 },
+            { code: '', name: 'MANAGEMENT OF SOFTWARE SYSTEMS', credit: 3 },
+            { code: '', name: 'DISASTER MANAGEMENT', credit: 0 },
+            { code: '', name: 'AI & DATA SCIENCE LAB', credit: 2 },
+            { code: '', name: 'DATABASE MANAGEMENT SYSTEMS LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 6', subjects: [
+            { code: '', name: 'CONCEPTS IN BIG DATA ANALYTICS', credit: 4 },
+            { code: '', name: 'ROBOTICS AND INTELLIGENT SYSTEM', credit: 4 },
+            { code: '', name: 'ALGORITHM ANALYSIS AND DESIGN', credit: 4 },
+            { code: '', name: 'PROGRAM ELECTIVE I', credit: 3 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS & FOREIGN TRADE', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE WORK', credit: 1 },
+            { code: '', name: 'BIGDATA ANALYTICS LAB', credit: 2 },
+            { code: '', name: 'MINIPROJECT', credit: 2 },
+        ]},
+        { name: 'SEMESTER 7', subjects: [
+            { code: '', name: 'FOUNDATIONS OF DEEP LEARNING', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE II', credit: 3 },
+            { code: '', name: 'OPEN ELECTIVE', credit: 3 },
+            { code: '', name: 'INDUSTRIAL SAFETY ENGINEERING', credit: 0 },
+            { code: '', name: 'DEEP LEARNING LAB', credit: 2 },
+            { code: '', name: 'SEMINAR', credit: 2 },
+            { code: '', name: 'PROJECT PHASE I', credit: 2 },
+        ]},
+        { name: 'SEMESTER 8', subjects: [
+            { code: '', name: 'BUSINESS ANALYTICS', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE III', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE IV', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE V', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE VIVA', credit: 1 },
+            { code: '', name: 'PROJECT PHASE II', credit: 4 },
+        ]},
+    ],
+    me: [
+        { name: 'SEMESTER 1', subjects: [
+            { code: '', name: 'LINEAR ALGEBRA AND CALCULUS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS B / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'LIFE SKILLS', credit: 0 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 2', subjects: [
+            { code: '', name: 'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS B / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'PROFESSIONAL COMMUNICATION', credit: 0 },
+            { code: '', name: 'PROGRAMMING IN C', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 3', subjects: [
+            { code: '', name: 'PARTIAL DIFFERENTIAL EQUATION AND COMPLEX ANALYSIS', credit: 4 },
+            { code: '', name: 'MECHANICS OF SOLIDS', credit: 4 },
+            { code: '', name: 'MECHANICS OF FLUIDS', credit: 4 },
+            { code: '', name: 'METALLURGY & MATERIAL SCIENCE', credit: 4 },
+            { code: '', name: 'DESIGN AND ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'SUSTAINABLE ENGINEERING', credit: 0 },
+            { code: '', name: 'COMPUTER AIDED MACHINE DRAWING', credit: 2 },
+            { code: '', name: 'MATERIALS TESTING LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 4', subjects: [
+            { code: '', name: 'PROBABILITY, STATISTICS AND NUMERICAL METHODS', credit: 4 },
+            { code: '', name: 'ENGINEERING THERMODYNAMICS', credit: 4 },
+            { code: '', name: 'MANUFACTURING PROCESS', credit: 4 },
+            { code: '', name: 'FLUID MACHINERY', credit: 4 },
+            { code: '', name: 'DESIGN AND ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'CONSTITUTION OF INDIA', credit: 0 },
+            { code: '', name: 'FM & HM LAB', credit: 2 },
+            { code: '', name: 'MACHINE TOOLS LAB-I', credit: 2 },
+        ]},
+        { name: 'SEMESTER 5', subjects: [
+            { code: '', name: 'MECHANICS OF MACHINERY', credit: 4 },
+            { code: '', name: 'THERMAL ENGINEERING', credit: 4 },
+            { code: '', name: 'INDUSTRIAL & SYSTEMS ENGINEERING', credit: 4 },
+            { code: '', name: 'MACHINE TOOLS AND METROLOGY', credit: 4 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS AND FOREIGN TRADE / MANAGEMENT FOR ENGINEERS', credit: 3 },
+            { code: '', name: 'DISASTER MANAGEMENT', credit: 0 },
+            { code: '', name: 'MACHINE TOOLS LAB-II', credit: 2 },
+            { code: '', name: 'THERMAL ENGINEERING LAB-I', credit: 2 },
+        ]},
+        { name: 'SEMESTER 6', subjects: [
+            { code: '', name: 'HEAT & MASS TRANSFER', credit: 4 },
+            { code: '', name: 'DYNAMICS AND DESIGN OF MACHINERY', credit: 4 },
+            { code: '', name: 'ADVANCED MANUFACTURING ENGINEERING', credit: 4 },
+            { code: '', name: 'PROGRAM ELECTIVE I', credit: 3 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS AND FOREIGN TRADE / MANAGEMENT FOR ENGINEERS', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE WORK', credit: 1 },
+            { code: '', name: 'COMPUTER AIDED DESIGN & ANALYSIS LAB', credit: 2 },
+            { code: '', name: 'THERMAL ENGINEERING LAB-II', credit: 2 },
+        ]},
+        { name: 'SEMESTER 7', subjects: [
+            { code: '', name: 'DESIGN OF MACHINE ELEMENTS', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE II', credit: 3 },
+            { code: '', name: 'OPEN ELECTIVE', credit: 3 },
+            { code: '', name: 'INDUSTRIAL SAFETY ENGINEERING', credit: 0 },
+            { code: '', name: 'MECHANICAL ENGINEERING LAB', credit: 2 },
+            { code: '', name: 'SEMINAR', credit: 2 },
+            { code: '', name: 'PROJECT PHASE I', credit: 2 },
+        ]},
+        { name: 'SEMESTER 8', subjects: [
+            { code: '', name: 'MECHATRONICS', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE III', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE IV', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE V', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE VIVA VOCE', credit: 1 },
+            { code: '', name: 'PROJECT PHASE II', credit: 4 },
+        ]},
+    ],
+    ec: [
+        { name: 'SEMESTER 1', subjects: [
+            { code: '', name: 'LINEAR ALGEBRA AND CALCULUS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'LIFE SKILLS', credit: 0 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 2', subjects: [
+            { code: '', name: 'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'PROFESSIONAL COMMUNICATION', credit: 0 },
+            { code: '', name: 'PROGRAMMING IN C', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 3', subjects: [
+            { code: '', name: 'PARTIAL DIFFERENTIAL EQUATION AND COMPLEX ANALYSIS', credit: 4 },
+            { code: '', name: 'SOLID STATE DEVICES', credit: 4 },
+            { code: '', name: 'LOGIC CIRCUIT DESIGN', credit: 4 },
+            { code: '', name: 'NETWORK THEORY', credit: 4 },
+            { code: '', name: 'DESIGN AND ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'SUSTAINABLE ENGINEERING', credit: 0 },
+            { code: '', name: 'SCIENTIFIC COMPUTING LAB', credit: 2 },
+            { code: '', name: 'LOGIC DESIGN LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 4', subjects: [
+            { code: '', name: 'PROBABILITY, RANDOM PROCESS AND NUMERICAL METHODS', credit: 4 },
+            { code: '', name: 'ANALOG CIRCUITS', credit: 4 },
+            { code: '', name: 'SIGNALS AND SYSTEMS', credit: 4 },
+            { code: '', name: 'COMPUTER ARCHITECTURE AND MICROCONTROLLERS', credit: 4 },
+            { code: '', name: 'DESIGN AND ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'CONSTITUTION OF INDIA', credit: 0 },
+            { code: '', name: 'ANALOG CIRCUITS AND SIMULATION LAB', credit: 2 },
+            { code: '', name: 'MICROCONTROLLER LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 5', subjects: [
+            { code: '', name: 'LINEAR INTEGRATED CIRCUITS', credit: 4 },
+            { code: '', name: 'DIGITAL SIGNAL PROCESSING', credit: 4 },
+            { code: '', name: 'ANALOG AND DIGITAL COMMUNICATION', credit: 4 },
+            { code: '', name: 'CONTROL SYSTEMS', credit: 4 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS AND FOREIGN TRADE / MANAGEMENT FOR ENGINEERS', credit: 3 },
+            { code: '', name: 'DISASTER MANAGEMENT', credit: 0 },
+            { code: '', name: 'ANALOG INTEGRATED CIRCUITS AND SIMULATION LAB', credit: 2 },
+            { code: '', name: 'DIGITAL SIGNAL PROCESSING LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 6', subjects: [
+            { code: '', name: 'ELECTROMAGNETICS', credit: 4 },
+            { code: '', name: 'VLSI CIRCUIT DESIGN', credit: 4 },
+            { code: '', name: 'INFORMATION THEORY AND CODING', credit: 4 },
+            { code: '', name: 'PROGRAM ELECTIVE I', credit: 3 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS AND FOREIGN TRADE / MANAGEMENT FOR ENGINEERS', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE WORK', credit: 1 },
+            { code: '', name: 'COMMUNICATION LAB', credit: 2 },
+            { code: '', name: 'MINIPROJECT', credit: 2 },
+        ]},
+        { name: 'SEMESTER 7', subjects: [
+            { code: '', name: 'MICROWAVES AND ANTENNAS', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE II', credit: 3 },
+            { code: '', name: 'OPEN ELECTIVE', credit: 3 },
+            { code: '', name: 'INDUSTRIAL SAFETY ENGINEERING', credit: 0 },
+            { code: '', name: 'ELECTROMAGNETICS LAB', credit: 2 },
+            { code: '', name: 'SEMINAR', credit: 2 },
+            { code: '', name: 'PROJECT PHASE I', credit: 2 },
+        ]},
+        { name: 'SEMESTER 8', subjects: [
+            { code: '', name: 'WIRELESS COMMUNICATION', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE III', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE IV', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE V', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE VIVA VOCE', credit: 1 },
+            { code: '', name: 'PROJECT PHASE II', credit: 4 },
+        ]},
+    ],
+    ee: [
+        { name: 'SEMESTER 1', subjects: [
+            { code: '', name: 'LINEAR ALGEBRA AND CALCULUS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'LIFE SKILLS', credit: 0 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 2', subjects: [
+            { code: '', name: 'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
+            { code: '', name: 'PROFESSIONAL COMMUNICATION', credit: 0 },
+            { code: '', name: 'PROGRAMMING IN C', credit: 4 },
+            { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
+            { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
+        ]},
+        { name: 'SEMESTER 3', subjects: [
+            { code: '', name: 'PARTIAL DIFFERENTIAL EQUATION AND COMPLEX ANALYSIS', credit: 4 },
+            { code: '', name: 'CIRCUITS AND NETWORKS', credit: 4 },
+            { code: '', name: 'MEASUREMENTS AND INSTRUMENTATION', credit: 4 },
+            { code: '', name: 'ANALOG ELECTRONICS', credit: 4 },
+            { code: '', name: 'DESIGN & ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'SUSTAINABLE ENGINEERING', credit: 0 },
+            { code: '', name: 'CIRCUITS AND MEASUREMENTS LAB', credit: 2 },
+            { code: '', name: 'ANALOG ELECTRONICS LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 4', subjects: [
+            { code: '', name: 'PROBABILITY, RANDOM PROCESSES AND NUMERICAL METHODS', credit: 4 },
+            { code: '', name: 'DC MACHINES AND TRANSFORMERS', credit: 4 },
+            { code: '', name: 'ELECTROMAGNETIC THEORY', credit: 4 },
+            { code: '', name: 'DIGITAL ELECTRONICS', credit: 4 },
+            { code: '', name: 'DESIGN & ENGINEERING / PROFESSIONAL ETHICS', credit: 2 },
+            { code: '', name: 'CONSTITUTION OF INDIA', credit: 0 },
+            { code: '', name: 'ELECTRICAL MACHINES LAB I', credit: 2 },
+            { code: '', name: 'DIGITAL ELECTRONICS LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 5', subjects: [
+            { code: '', name: 'POWER SYSTEMS I', credit: 4 },
+            { code: '', name: 'MICROPROCESSORS AND MICROCONTROLLERS', credit: 4 },
+            { code: '', name: 'SIGNALS AND SYSTEMS', credit: 4 },
+            { code: '', name: 'SYNCHRONOUS AND INDUCTION MACHINES', credit: 4 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS & FOREIGN TRADE / MANAGEMENT FOR ENGINEERS', credit: 3 },
+            { code: '', name: 'DISASTER MANAGEMENT', credit: 0 },
+            { code: '', name: 'MICROPROCESSORS AND MICROCONTROLLERS LAB', credit: 2 },
+            { code: '', name: 'ELECTRICAL MACHINES LAB II', credit: 2 },
+        ]},
+        { name: 'SEMESTER 6', subjects: [
+            { code: '', name: 'LINEAR CONTROL SYSTEMS', credit: 4 },
+            { code: '', name: 'POWER SYSTEMS II', credit: 4 },
+            { code: '', name: 'POWER ELECTRONICS', credit: 4 },
+            { code: '', name: 'PROGRAM ELECTIVE I', credit: 3 },
+            { code: '', name: 'INDUSTRIAL ECONOMICS & FOREIGN TRADE / MANAGEMENT FOR ENGINEERS', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE WORK', credit: 1 },
+            { code: '', name: 'POWER SYSTEMS LAB', credit: 2 },
+            { code: '', name: 'POWER ELECTRONICS LAB', credit: 2 },
+        ]},
+        { name: 'SEMESTER 7', subjects: [
+            { code: '', name: 'ADVANCED CONTROL SYSTEMS', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE II', credit: 3 },
+            { code: '', name: 'OPEN ELECTIVE', credit: 3 },
+            { code: '', name: 'INDUSTRIAL SAFETY ENGINEERING', credit: 0 },
+            { code: '', name: 'CONTROL SYSTEMS LAB', credit: 2 },
+            { code: '', name: 'SEMINAR', credit: 2 },
+            { code: '', name: 'PROJECT PHASE I', credit: 2 },
+        ]},
+        { name: 'SEMESTER 8', subjects: [
+            { code: '', name: 'ELECTRICAL SYSTEM DESIGN AND ESTIMATION', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE III', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE IV', credit: 3 },
+            { code: '', name: 'PROGRAM ELECTIVE V', credit: 3 },
+            { code: '', name: 'COMPREHENSIVE COURSE VIVA', credit: 1 },
+            { code: '', name: 'PROJECT PHASE II', credit: 4 },
+        ]},
+    ],
+    universal: [
+        { name: 'SEMESTER 1', subjects: [
+            { code: '', name: 'Subject/Course 1', credit: 1 },
+            { code: '', name: 'Subject/Course 2', credit: 1 },
+            { code: '', name: 'Subject/Course 3', credit: 1 },
+        ]},
+    ]
+};
+// Local default semester data (used as fallback)
+let semesters = [
+    {
+        name: 'SEMESTER 1',
+        subjects: [
+            { code: 'MAT 101', name: 'LINEAR ALGEBRA AND CALCULUS', credit: 4 },
+            { code: 'PHT 100', name: 'ENGINEERING CHEMISTRY/PHYSICS', credit: 4 },
+            { code: 'EST 100', name: 'ENGINEERING MECHANICS/GRAPHICS', credit: 3 },
+            { code: 'EST 120', name: 'BASICS OF CIVIL & MECH/ELEC & ELC', credit: 4 },
+            { code: 'PHL 120', name: 'ENGINEERING CHEMISTRY/PHYSICS LAB', credit: 1 },
+            { code: 'ESL 120', name: 'CIVIL & MECH/ELEC & ELC WORKSHOP', credit: 1 },
+        ],
+    },
+    {
+        name: 'SEMESTER 2',
+        subjects: [
+            { code: 'MAT 102', name: 'VECTOR CALCULUS, DE AND TRANSFORMS', credit: 4 },
+            { code: 'CYT 100', name: 'ENGINEERING CHEMISTRY/PHYSICS', credit: 4 },
+            { code: 'EST 110', name: 'ENGINEERING MECHANICS/GRAPHICS', credit: 3 },
+            { code: 'EST 130', name: 'BASICS OF CIVIL & MECH/ELEC & ELC', credit: 4 },
+            { code: 'EST 102', name: 'PROGRAMMING IN C', credit: 4 },
+            { code: 'HUN 102', name: 'PROFESSIONAL COMMUNICATION', credit: 2 },
+            { code: 'CYL 120', name: 'ENGINEERING CHEMISTRY/PHYSICS LAB', credit: 1 },
+            { code: 'ESL 130', name: 'CIVIL & MECH/ELEC & ELC WORKSHOP', credit: 1 },
+        ],
+    },
+    {
+        name: 'SEMESTER 3',
+        subjects: [
+            { code: 'MAT 203', name: 'DISCRETE MATHEMATICAL STRUCTURES', credit: 4 },
+            { code: 'CST 201', name: 'DATA STRUCTURES', credit: 4 },
+            { code: 'CST 203', name: 'LOGIC SYSTEM DESIGN', credit: 4 },
+            { code: 'CST 205', name: 'OBJECT ORIENTED PROGRAMMING USING JAVA', credit: 4 },
+            { code: 'MCN 201', name: 'SUSTAINABLE ENGINEERING', credit: 0 },
+            { code: 'CSL 201', name: 'DATA STRUCTURES LAB', credit: 2 },
+            { code: 'CSL 203', name: 'OBJECT ORIENTED PROGRAMMING LAB (IN JAVA)', credit: 2 },
+        ],
+    },
+    {
+        name: 'SEMESTER 4',
+        subjects: [
+            { code: 'MAT 206', name: 'GRAPH THEORY', credit: 3 },
+            { code: 'CST 202', name: 'COMPUTER ORGANIZATION AND ARCHITECTURE', credit: 4 },
+            { code: 'CST 204', name: 'DATABASE MANAGEMENT SYSTEMS', credit: 4 },
+            { code: 'CST 206', name: 'OPERATING SYSTEMS', credit: 3 },
+            { code: 'MCN 202', name: 'CONSTITUTION OF INDIA', credit: 0 },
+            { code: 'CSL 202', name: 'OPERATING SYSTEMS LAB', credit: 2 },
+            { code: 'CSL 204', name: 'DATABASE MANAGEMENT SYSTEMS LAB', credit: 2 },
+        ],
+    },
+    {
+        name: 'SEMESTER 5',
+        subjects: [
+            { code: 'CST 301', name: 'THEORY OF COMPUTATION', credit: 4 },
+            { code: 'CST 303', name: 'COMPUTER NETWORKS', credit: 4 },
+            { code: 'CST 305', name: 'SYSTEM SOFTWARE', credit: 3 },
+            { code: 'CST 307', name: 'MICROPROCESSORS AND MICROCONTROLLERS', credit: 3 },
+            { code: 'CST XXX', name: 'PROGRAM ELECTIVE I', credit: 3 },
+            { code: 'MCN 301', name: 'DISASTER MANAGEMENT', credit: 0 },
+            { code: 'CSL 331', name: 'SYSTEM SOFTWARE AND NETWORKING LAB', credit: 2 },
+            { code: 'CSD 333', name: 'MINIPROJECT', credit: 2 },
+        ],
+    },
+    {
+        name: 'SEMESTER 6',
+        subjects: [
+            { code: 'CST 302', name: 'COMPILER DESIGN', credit: 4 },
+            { code: 'CST 304', name: 'COMPUTER GRAPHICS AND IMAGE PROCESSING', credit: 4 },
+            { code: 'CST 306', name: 'ALGORITHM ANALYSIS AND DESIGN', credit: 4 },
+            { code: 'CST XXX', name: 'PROGRAM ELECTIVE II', credit: 3 },
+            { code: 'HUT 300', name: 'INDUSTRIAL ECONOMICS & FOREIGN TRADE', credit: 3 },
+            { code: 'CST 308', name: 'COMPREHENSIVE COURSE WORK', credit: 1 },
+            { code: 'CSL 332', name: 'NETWORKING LAB', credit: 2 },
+            { code: 'CSD 334', name: 'MINIPROJECT', credit: 2 },
+        ],
+    },
+    {
+        name: 'SEMESTER 7',
+        subjects: [
+            { code: 'CST 401', name: 'ARTIFICIAL INTELLIGENCE', credit: 3 },
+            { code: 'CST XXX', name: 'PROGRAM ELECTIVE III', credit: 3 },
+            { code: 'XXX XXX', name: 'OPEN ELECTIVE', credit: 3 },
+            { code: 'CSL 411', name: 'COMPILER LAB', credit: 2 },
+            { code: 'CSD 413', name: 'PROJECT PHASE I', credit: 2 },
+        ],
+    },
+    {
+        name: 'SEMESTER 8',
+        subjects: [
+            { code: 'CST 402', name: 'COMPREHENSIVE VIVA', credit: 3 },
+            { code: 'CST XXX', name: 'PROGRAM ELECTIVE IV', credit: 3 },
+            { code: 'CST XXX', name: 'PROGRAM ELECTIVE V', credit: 3 },
+            { code: 'MCN 401', name: 'INDUSTRIAL SAFETY', credit: 0 },
+            { code: 'CSD 416', name: 'PROJECT PHASE 2', credit: 12 },
+        ],
+    },
+];
+
+// Helper: clear and re-render semesters container
+function clearSemestersContainer() {
+    if (!semestersContainer) return;
+    semestersContainer.innerHTML = '';
+}
+
+// --- TAB HANDLING LOGIC ---
+const tabs = document.querySelectorAll('.tab-btn');
+const tabContents = document.querySelectorAll('.tab-content');
+const indicator = document.getElementById('tab-active-indicator');
+const rootStyle = document.documentElement.style;
+
+function updateIndicator(activeEl) {
+    if (!indicator || !activeEl) return;
+    const nav = activeEl.parentElement;
+    const buttons = Array.from(nav.querySelectorAll('.tab-btn'));
+    const idx = buttons.indexOf(activeEl);
+    const navRect = nav.getBoundingClientRect();
+    const btnRect = activeEl.getBoundingClientRect();
+    const left = btnRect.left - navRect.left + 6; // match CSS left padding
+    const width = btnRect.width - 12; // subtract paddings
+    indicator.style.transform = `translateX(${left}px)`;
+    indicator.style.width = `${width}px`;
+}
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(item => {
+            item.classList.remove('border-cyan-500', 'text-cyan-400', 'is-active');
+            item.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-300');
+        });
+        tab.classList.add('border-cyan-500', 'text-cyan-400', 'is-active');
+        tab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-300');
+        const targetId = tab.id.replace('tab-', 'content-');
+        tabContents.forEach(content => {
+            content.id === targetId ? content.classList.add('active') : content.classList.remove('active');
+        });
+        updateIndicator(tab);
+    });
+});
+
+// Position indicator on load and on resize
+window.addEventListener('load', () => {
+    const defaultActive = document.querySelector('.tab-btn.is-active') || document.querySelector('.tab-btn');
+    updateIndicator(defaultActive);
+});
+// debounce indicator reposition to avoid thrash on resize
+let __ktu_indicator_resize_timer = null;
+window.addEventListener('resize', () => {
+    clearTimeout(__ktu_indicator_resize_timer);
+    __ktu_indicator_resize_timer = setTimeout(() => {
+        const active = document.querySelector('.tab-btn.is-active');
+        if (active) updateIndicator(active);
+    }, 120);
+});
+// Legacy gradient pointer/idle animation removed — particle canvas is used for background rendering
+
+// --- ENGINEERING NODES BACKGROUND (shapes, nodes, and faint blueprint grid) ---
+(() => {
+    const canvas = document.getElementById('bg-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+    const DPR = Math.max(1, window.devicePixelRatio || 1);
+    let nodes = [];
+    const MAX_NODES = Math.floor((w * h) / 12000); // lower density for shapes
+    const MOUSE = { x: w / 2, y: h / 2 };
+    let animationId = null;
+
+    function rand(min, max) { return Math.random() * (max - min) + min; }
+
+    let NODE_FILL = getComputedStyle(document.documentElement).getPropertyValue('--particle-fill').trim() || '#a0dcff';
+    let NODE_STROKE = getComputedStyle(document.documentElement).getPropertyValue('--particle-stroke').trim() || '#78b4ff';
+    let CANVAS_CENTER = getComputedStyle(document.documentElement).getPropertyValue('--canvas-center').trim() || 'rgba(10,14,20,0.7)';
+    let CANVAS_EDGE = getComputedStyle(document.documentElement).getPropertyValue('--canvas-edge').trim() || 'rgba(3,6,10,0.95)';
+
+    function refreshParticleColors() {
+        NODE_FILL = getComputedStyle(document.documentElement).getPropertyValue('--particle-fill').trim() || NODE_FILL;
+        NODE_STROKE = getComputedStyle(document.documentElement).getPropertyValue('--particle-stroke').trim() || NODE_STROKE;
+        CANVAS_CENTER = getComputedStyle(document.documentElement).getPropertyValue('--canvas-center').trim() || CANVAS_CENTER;
+        CANVAS_EDGE = getComputedStyle(document.documentElement).getPropertyValue('--canvas-edge').trim() || CANVAS_EDGE;
+    }
+
+    // Node types render different geometric shapes
+    function Node(x, y, size, type) {
+        this.x = x; this.y = y; this.size = size; this.type = type || 'dot';
+        this.vx = rand(-0.05, 0.05); this.vy = rand(-0.05, 0.05);
+        this.alpha = rand(0.35, 0.9);
+        this.phase = rand(0, Math.PI*2);
+    }
+
+    Node.prototype.update = function(dt) {
+        // slow drift + subtle bob (gives organic engineering motion)
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        this.phase += 0.01 * dt;
+        this.y += Math.sin(this.phase) * 0.02 * dt;
+
+        // mild mouse attraction within radius
+        const dx = (MOUSE.x - this.x);
+        const dy = (MOUSE.y - this.y);
+        const dist2 = dx*dx + dy*dy;
+        if (dist2 < 16000) {
+            const f = (1 - dist2 / 16000) * 0.03 * dt;
+            this.x += dx * f;
+            this.y += dy * f;
+        }
+
+        // wrap
+        if (this.x < -40) this.x = w + 40;
+        if (this.x > w + 40) this.x = -40;
+        if (this.y < -40) this.y = h + 40;
+        if (this.y > h + 40) this.y = -40;
+    };
+
+    Node.prototype.draw = function(ctx) {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.globalAlpha = this.alpha;
+        const fill = `rgba(${hexToRgb(NODE_FILL)},${this.alpha})`;
+        const stroke = `rgba(${hexToRgb(NODE_STROKE)},${Math.min(0.95, this.alpha + 0.05)})`;
+        ctx.fillStyle = fill;
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 1.2;
+        const s = this.size;
+        if (this.type === 'hex') {
+            const n = 6; const r = s;
+            ctx.beginPath();
+            for (let i=0;i<n;i++) {
+                const a = (i / n) * Math.PI * 2 + Math.PI/6;
+                const px = Math.cos(a) * r, py = Math.sin(a) * r;
+                i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+            }
+            ctx.closePath(); ctx.fill(); ctx.stroke();
+        } else if (this.type === 'tri') {
+            ctx.beginPath(); ctx.moveTo(0,-s); ctx.lineTo(s, s); ctx.lineTo(-s, s); ctx.closePath(); ctx.fill(); ctx.stroke();
+        } else if (this.type === 'square') {
+            ctx.beginPath(); ctx.rect(-s,-s, s*2, s*2); ctx.fill(); ctx.stroke();
+        } else {
+            // dot
+            ctx.beginPath(); ctx.arc(0,0, s, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        }
+        ctx.restore();
+    };
+
+    function hexToRgb(hex) {
+        hex = hex.replace('#','').trim();
+        if (hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+        const num = parseInt(hex,16);
+        const r = (num >> 16) & 255;
+        const g = (num >> 8) & 255;
+        const b = num & 255;
+        return `${r},${g},${b}`;
+    }
+
+    function initNodes() {
+        nodes = [];
+        const count = Math.min(80, Math.max(30, MAX_NODES));
+        const types = ['dot','hex','tri','square'];
+        for (let i = 0; i < count; i++) {
+            const x = rand(0,w); const y = rand(0,h);
+            const size = rand(1.2, 6) * (DPR>1?1.2:1);
+            const type = types[Math.floor(rand(0, types.length))];
+            nodes.push(new Node(x,y,size,type));
+        }
+    }
+
+    function resize() {
+        w = canvas.width = Math.floor(window.innerWidth * DPR);
+        h = canvas.height = Math.floor(window.innerHeight * DPR);
+        canvas.style.width = `${window.innerWidth}px`;
+        canvas.style.height = `${window.innerHeight}px`;
+        ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        initNodes();
+    }
+
+    function drawGrid() {
+        // faint engineering grid with axis lines
+        const spacing = 60;
+        ctx.save();
+        ctx.lineWidth = 0.4; ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        for (let x = 0; x < window.innerWidth; x += spacing) {
+            ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x, window.innerHeight); ctx.stroke();
+        }
+        for (let y = 0; y < window.innerHeight; y += spacing) {
+            ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(window.innerWidth, y); ctx.stroke();
+        }
+        // center axes
+        ctx.lineWidth = 1; ctx.strokeStyle = 'rgba(120,200,255,0.06)';
+        ctx.beginPath(); ctx.moveTo(window.innerWidth/2,0); ctx.lineTo(window.innerWidth/2, window.innerHeight); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(0, window.innerHeight/2); ctx.lineTo(window.innerWidth, window.innerHeight/2); ctx.stroke();
+        ctx.restore();
+    }
+
+    function clear() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        const g = ctx.createRadialGradient(w/2, h/2, Math.min(w,h)*0.05, w/2, h/2, Math.max(w,h));
+        g.addColorStop(0, CANVAS_CENTER.replace(/"/g,''));
+        g.addColorStop(1, CANVAS_EDGE.replace(/"/g,''));
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+    }
+
+    let last = performance.now();
+    function tick(now) {
+        const dt = Math.min(48, now - last) / 16.666; last = now;
+        clear();
+        drawGrid();
+
+        // small symbolic glyphs for 'engineer vibe'
+        ctx.save(); ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.font = '14px "Space Mono", monospace';
+        const glyphs = ['∑','∫','λ','ƒ','sin','cos','√'];
+        for (let i=0;i<6;i++) {
+            const gx = (i * 97 + 43) % window.innerWidth;
+            const gy = (i * 61 + 121) % window.innerHeight;
+            ctx.fillText(glyphs[i % glyphs.length], gx, gy);
+        }
+        ctx.restore();
+
+        // update & draw nodes
+        for (let n of nodes) { n.update(dt); n.draw(ctx); }
+
+        // draw soft links between nearby nodes
+        ctx.lineWidth = 0.9;
+        for (let i=0;i<nodes.length;i++){
+            for (let j=i+1;j<nodes.length;j++){
+                const a = nodes[i], b = nodes[j];
+                const dx = a.x - b.x, dy = a.y - b.y; const d2 = dx*dx+dy*dy;
+                if (d2 < 22000) {
+                    const alpha = 0.09 * (1 - d2/22000);
+                    ctx.strokeStyle = `rgba(${hexToRgb(NODE_STROKE)},${alpha})`;
+                    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+                }
+            }
+        }
+
+        animationId = requestAnimationFrame(tick);
+    }
+
+    function onMove(e) { MOUSE.x = e.clientX * DPR; MOUSE.y = e.clientY * DPR; }
+    function onLeave() { MOUSE.x = w/2; MOUSE.y = h/2; }
+
+    // init
+    resize();
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('pointermove', onMove, { passive: true });
+    window.addEventListener('pointerleave', onLeave);
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReduced) animationId = requestAnimationFrame(tick);
+    else for (let n of nodes) n.draw(ctx);
+
+})();
+
+// --- CGPA CALCULATOR LOGIC ---
+const semestersContainer = document.getElementById('semesters-container');
+const cgpaDisplay = document.getElementById('cgpa-display');
+const creditsDisplay = document.getElementById('credits-display');
+const resetButtonCGPA = document.getElementById('reset-button-cgpa');
+
+function updateAllCGPACalculations() {
+    let cumulativeCreditPoints = 0, cumulativeCredits = 0, finalCgpa = 0;
+    semesters.forEach((semester, semIndex) => {
+        let semesterCreditPoints = 0, semesterCredits = 0;
+        semester.subjects.forEach((subject, subIndex) => {
+            const grade = document.getElementById(`sem-${semIndex}-sub-${subIndex}`).value;
+            if (grade && gradePoints.hasOwnProperty(grade) && subject.credit > 0) {
+                semesterCreditPoints += subject.credit * gradePoints[grade];
+                semesterCredits += subject.credit;
+            }
+        });
+        const sgpa = semesterCredits > 0 ? (semesterCreditPoints / semesterCredits) : 0;
+        document.getElementById(`sgpa-${semIndex}`).textContent = sgpa.toFixed(2);
+        cumulativeCreditPoints += semesterCreditPoints;
+        cumulativeCredits += semesterCredits;
+        const cgpaUntil = cumulativeCredits > 0 ? (cumulativeCreditPoints / cumulativeCredits) : 0;
+        document.getElementById(`cgpa-until-${semIndex}`).textContent = cgpaUntil.toFixed(2);
+        if (cumulativeCredits > 0) finalCgpa = cgpaUntil;
+    });
+    cgpaDisplay.textContent = finalCgpa.toFixed(2);
+    creditsDisplay.textContent = cumulativeCredits;
+}
+
+function resetCGPACalculator() {
+    document.querySelectorAll('.grade-select').forEach(select => select.value = '');
+    updateAllCGPACalculations();
+}
+
+function renderSemesters() {
+    clearSemestersContainer();
+    semesters.forEach((semester, semesterIndex) => {
+        const semesterCard = document.createElement('div');
+        semesterCard.className = 'bg-gray-800 p-5 rounded-lg shadow-md semester-card';
+        const subjectsHTML = semester.subjects.map((subject, subjectIndex) => `
+            <div class="grid grid-cols-10 gap-2 items-center py-2 border-b border-gray-700 last:border-b-0">
+                <div class="col-span-6"><p class="font-medium text-white truncate" title="${subject.code} - ${subject.name}">${subject.code} - ${subject.name}</p><p class="text-xs text-gray-400">Credits: ${subject.credit}</p></div>
+                <div class="col-span-4"><select id="sem-${semesterIndex}-sub-${subjectIndex}" ${subject.credit <= 0 ? 'disabled aria-disabled="true" title="Zero credit / audit course" class="grade-select select-disabled w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 p-2.5"' : 'class="grade-select w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-cyan-500 focus:border-cyan-500 p-2.5"'}>${gradeOptions.map(g => `<option value="${g}">${g || 'Grade'}</option>`).join('')}</select></div>
+            </div>`).join('');
+        semesterCard.innerHTML = `
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-white">${semester.name}</h3>
+                <div class="flex gap-4 text-right">
+                    <div><span class="text-sm font-medium text-cyan-400">SGPA</span><p id="sgpa-${semesterIndex}" class="text-2xl font-bold text-white">0.00</p></div>
+                    <div><span class="text-sm font-medium text-amber-400">CGPA Until</span><p id="cgpa-until-${semesterIndex}" class="text-2xl font-bold text-white">0.00</p></div>
+                </div>
+            </div><div class="space-y-2">${subjectsHTML}</div>`;
+        semestersContainer.appendChild(semesterCard);
+    });
+}
+
+// --- Department loading (embedded data only) ---
+const departmentSelect = document.getElementById('department-select');
+function loadDepartment(deptKey) {
+    if (departmentSemesters.hasOwnProperty(deptKey)) {
+        semesters = JSON.parse(JSON.stringify(departmentSemesters[deptKey]));
+    } else {
+        semesters = JSON.parse(JSON.stringify(departmentSemesters['cs']));
+    }
+    renderSemesters();
+    updateAllCGPACalculations();
+}
+
+if (departmentSelect) {
+    try {
+        const saved = localStorage.getItem('ktucalc:department');
+        if (saved && departmentSemesters.hasOwnProperty(saved)) departmentSelect.value = saved;
+    } catch (e) {}
+
+    departmentSelect.addEventListener('change', (e) => {
+        const v = e.target.value;
+        try { localStorage.setItem('ktucalc:department', v); } catch (e) {}
+        loadDepartment(v);
+    });
+    loadDepartment(departmentSelect.value || 'cs');
+}
+
+// --- INTERNAL MARK CALCULATOR LOGIC (UPDATED) ---
+const internalInputs = document.querySelectorAll('.internal-input');
+const internalTotalDisplay = document.getElementById('internal-total');
+
+function calculateInternalMarks() {
+    const s1 = parseFloat(document.getElementById('series1').value) || 0;
+    const s2 = parseFloat(document.getElementById('series2').value) || 0;
+    const assign1 = parseFloat(document.getElementById('assignment1').value) || 0;
+    const assign2 = parseFloat(document.getElementById('assignment2').value) || 0;
+    const attendPercent = parseFloat(document.getElementById('attendance').value) || 0;
+
+    // Series average (out of 50, then scaled to 25)
+    const seriesAvg = (s1 + s2) / 2;
+    const seriesMarks = (seriesAvg / 50) * 25;
+
+    // Assignment total (out of 30, then scaled to 15)
+    const assignmentTotal = assign1 + assign2;
+    const assignmentMarks = (assignmentTotal / 30) * 15;
+
+    // Attendance marks (out of 10)
+    let attendanceMarks = 0;
+    if (attendPercent >= 90) {
+        attendanceMarks = 10;
+    } else if (attendPercent >= 80) {
+        attendanceMarks = 8;
+    } else if (attendPercent >= 75) {
+        attendanceMarks = 6;
+    }
+
+    // Total internal mark (capped at 50)
+    const totalInternal = Math.min(50, seriesMarks + assignmentMarks + attendanceMarks);
+    
+    internalTotalDisplay.textContent = `${totalInternal.toFixed(2)} / 50`;
+}
+
+// --- INITIALIZATION ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Init CGPA Calc
+    renderSemesters();
+    semestersContainer.addEventListener('change', (event) => {
+        if (event.target.classList.contains('grade-select')) updateAllCGPACalculations();
+    });
+    resetButtonCGPA.addEventListener('click', resetCGPACalculator);
+
+    // Init Internal Calc
+    internalInputs.forEach(input => {
+        input.addEventListener('input', calculateInternalMarks);
+    });
+
+    // Ensure particle colors match the current theme on init
+    if (typeof refreshParticleColors === 'function') try { refreshParticleColors(); } catch(e){}
+
+    // Keyboard navigation for tabs (left/right arrows)
+    document.addEventListener('keydown', (e) => {
+        const active = document.querySelector('.tab-btn.is-active');
+        if (!active) return;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            const buttons = Array.from(document.querySelectorAll('.tab-btn'));
+            const idx = buttons.indexOf(active);
+            let nextIdx = idx;
+            if (e.key === 'ArrowRight') nextIdx = (idx + 1) % buttons.length;
+            else nextIdx = (idx - 1 + buttons.length) % buttons.length;
+            buttons[nextIdx].click();
+            buttons[nextIdx].focus();
+        }
+    });
+
+        // --- ULTIMATE AI FEATURE: MODERN FILE UPLOAD ---
+        const uploadBox = document.getElementById('uploadBox');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const resultFiles = document.getElementById('resultFiles');
+        const filePreview = document.getElementById('filePreview');
+        const aiStatus = document.getElementById('aiStatus');
+
+        if (uploadBox && uploadBtn && resultFiles && filePreview && aiStatus) {
+            uploadBtn.addEventListener('click', () => resultFiles.click());
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    uploadBox.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    uploadBox.classList.remove('dragover');
+                });
+            });
+            
+            uploadBox.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
+            resultFiles.addEventListener('change', (e) => handleFiles(e.target.files));
+
+            function handleFiles(files) {
+                filePreview.innerHTML = '';
+                aiStatus.innerHTML = ''; // Clear status on new upload
+                const fileArr = Array.from(files);
+                
+                fileArr.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = file.name;
+                        filePreview.appendChild(img);
+                    } else if (file.type === 'application/pdf') {
+                        const pdfDiv = document.createElement('div');
+                        pdfDiv.className = 'pdf-thumb';
+                        pdfDiv.textContent = 'PDF';
+                        filePreview.appendChild(pdfDiv);
+                    }
+                });
+
+                if (fileArr.length > 0) {
+                    const statusP = document.createElement('p');
+                    statusP.textContent = 'Analyzing files...';
+                    aiStatus.appendChild(statusP);
+
+                    // Process each file individually
+                    processFilesIndividually(fileArr, statusP);
+                }
+            }
+
+            async function processFilesIndividually(fileArr, statusP) {
+                let totalAutoApplied = 0;
+                let allNeedsConfirmation = [];
+
+                for (let i = 0; i < fileArr.length; i++) {
+                    const file = fileArr[i];
+                    
+                    // Create file-specific section
+                    const fileSection = document.createElement('div');
+                    fileSection.style.marginTop = '1rem';
+                    fileSection.style.border = '1px solid rgba(255,255,255,0.1)';
+                    fileSection.style.borderRadius = '6px';
+                    fileSection.style.padding = '12px';
+                    fileSection.style.background = '#0a1019';
+                    
+                    const fileHeader = document.createElement('h4');
+                    fileHeader.style.color = '#60a5fa';
+                    fileHeader.style.marginBottom = '8px';
+                    fileHeader.style.fontSize = '0.95rem';
+                    fileHeader.textContent = `📄 Processing: ${file.name}`;
+                    fileSection.appendChild(fileHeader);
+                    
+                    aiStatus.appendChild(fileSection);
+
+                    try {
+                        // Extract text from individual file
+                        const fileText = await extractTextFromFiles([file]);
+                        
+                        // Show extracted text for this file
+                        const debugInfo = document.createElement('div');
+                        debugInfo.innerHTML = `
+                            <h5 style="margin-top: 0.5rem; font-weight: bold; color: #9ca3af;">Extracted Text:</h5>
+                            <pre style="background: #111; padding: 8px; border-radius: 4px; max-height: 120px; overflow-y: auto; font-size: 0.8rem;">${escapeHtml(fileText || 'No text extracted.')}</pre>
+                        `;
+                        fileSection.appendChild(debugInfo);
+
+                        // Detect semester for this specific file
+                        const aiData = parseResultText(fileText || '');
+                        
+                        if (aiData.semester) {
+                            const semesterInfo = document.createElement('div');
+                            semesterInfo.innerHTML = `
+                                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #10b981;">
+                                    <strong>✅ Detected Semester:</strong> ${aiData.semester}
+                                </div>
+                            `;
+                            fileSection.appendChild(semesterInfo);
+                        }
+
+                        // Extract entries from this file
+                        const entries = extractEntriesFromRawText(fileText || '');
+                        console.log(`📊 File ${i+1}: Extracted ${entries.length} entries`);
+
+                        if (entries.length === 0) {
+                            const noEntriesMsg = document.createElement('div');
+                            noEntriesMsg.style.color = '#f59e0b';
+                            noEntriesMsg.style.fontSize = '0.875rem';
+                            noEntriesMsg.innerHTML = '<strong>⚠️ No course entries found in this file.</strong>';
+                            fileSection.appendChild(noEntriesMsg);
+                            continue;
+                        }
+
+                        // Determine UI semester index for this file
+                        let uiSemIndex = 0;
+                        if (aiData.semester) {
+                            const n = parseInt(aiData.semester, 10);
+                            if (!isNaN(n) && n > 0 && n <= semesters.length) uiSemIndex = n - 1;
+                        }
+                        const uiSubjects = (semesters[uiSemIndex] && semesters[uiSemIndex].subjects) ? semesters[uiSemIndex].subjects : [];
+
+                        console.log(`🎯 File ${i+1} -> Semester index: ${uiSemIndex}, UI subjects: ${uiSubjects.length}`);
+
+                        // Process entries for this file
+                        let fileAutoApplied = 0;
+                        let fileNeedsConfirmation = [];
+
+                        entries.forEach((entry, idx) => {
+                            console.log(`\n🔍 File ${i+1} Processing: ${entry.subject} (${entry.code}) -> ${entry.grade}`);
+                            const match = findBestMatch(entry, uiSubjects);
+
+                            if (match.index >= 0 && match.confidence >= 0.8 && gradeOptions.includes(entry.grade)) {
+                                // Auto-apply high-confidence matches
+                                const select = document.getElementById(`sem-${uiSemIndex}-sub-${match.index}`);
+                                if (select) {
+                                    console.log(`✅ Auto-applying: ${entry.grade} to ${uiSubjects[match.index].name}`);
+                                    select.value = entry.grade;
+                                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                                    fileAutoApplied++;
+                                }
+                            } else if (match.index >= 0 && match.confidence >= 0.4) {
+                                // Add to confirmation list with file context
+                                fileNeedsConfirmation.push({ entry, match, idx, fileName: file.name, uiSemIndex });
+                            } else {
+                                console.log(`❌ No suitable match for: ${entry.subject}`);
+                            }
+                        });
+
+                        // Show results for this file
+                        if (fileAutoApplied > 0) {
+                            const autoMsg = document.createElement('div');
+                            autoMsg.style.marginTop = '0.5rem';
+                            autoMsg.style.color = 'lightgreen';
+                            autoMsg.style.fontSize = '0.875rem';
+                            autoMsg.innerHTML = `<strong>✅ ${fileAutoApplied}</strong> grade(s) automatically applied from this file.`;
+                            fileSection.appendChild(autoMsg);
+                            totalAutoApplied += fileAutoApplied;
+                        }
+
+                        allNeedsConfirmation = allNeedsConfirmation.concat(fileNeedsConfirmation);
+
+                    } catch (error) {
+                        console.error(`Error processing file ${file.name}:`, error);
+                        const errorMsg = document.createElement('div');
+                        errorMsg.style.color = '#ef4444';
+                        errorMsg.style.fontSize = '0.875rem';
+                        errorMsg.innerHTML = `<strong>❌ Error processing this file:</strong> ${error.message}`;
+                        fileSection.appendChild(errorMsg);
+                    }
+                }
+
+                // Show global confirmation panel if needed
+                if (allNeedsConfirmation.length > 0) {
+                    showGlobalConfirmationPanel(allNeedsConfirmation);
+                }
+
+                // Update main status
+                statusP.textContent = `Analysis complete! Processed ${fileArr.length} file(s).`;
+                if (totalAutoApplied > 0) {
+                    statusP.innerHTML += ` <span style="color:lightgreen">${totalAutoApplied} total grade(s) applied automatically.</span>`;
+                }
+            }
+
+            function showGlobalConfirmationPanel(needsConfirmation) {
+
+                            entries.forEach((entry, idx) => {
+                                console.log(`\n🔍 Processing: ${entry.subject} (${entry.code}) -> ${entry.grade}`);
+                                const match = findBestMatch(entry, uiSubjects);
+
+                                if (match.index >= 0 && match.confidence >= 0.8 && gradeOptions.includes(entry.grade)) {
+                                    // Auto-apply high-confidence matches
+                                    const select = document.getElementById(`sem-${uiSemIndex}-sub-${match.index}`);
+                                    if (select) {
+                                        console.log(`✅ Auto-applying: ${entry.grade} to ${uiSubjects[match.index].name}`);
+                                        select.value = entry.grade;
+                                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                                        autoApplied++;
+                                    }
+                                } else if (match.index >= 0 && match.confidence >= 0.4) {
+                                    // Add to confirmation list
+                                    needsConfirmation.push({ entry, match, idx });
+                                } else {
+                                    console.log(`❌ No suitable match for: ${entry.subject}`);
+                                }
+                            });
+
+                            // Show results
+                            if (autoApplied > 0) {
+                                const autoMsg = document.createElement('div');
+                                autoMsg.style.marginTop = '0.5rem';
+                                autoMsg.style.color = 'lightgreen';
+                                autoMsg.innerHTML = `<strong>✅ ${autoApplied}</strong> grade(s) automatically applied (high confidence).`;
+                                aiStatus.appendChild(autoMsg);
+                            }
+
+                            if (needsConfirmation.length > 0) {
+                                // Build simple confirmation panel for uncertain matches
+                                const panel = document.createElement('div');
+                                panel.style.marginTop = '0.8rem';
+                                panel.style.background = '#071229';
+                                panel.style.border = '1px solid rgba(255,255,255,0.1)';
+                                panel.style.padding = '12px';
+                                panel.style.borderRadius = '6px';
+
+                                const title = document.createElement('div');
+                                title.style.color = '#cbd5e1';
+                                title.style.fontSize = '0.95rem';
+                                title.style.marginBottom = '10px';
+                                title.textContent = `Review ${needsConfirmation.length} uncertain matches:`;
+                                panel.appendChild(title);
+
+                                needsConfirmation.forEach(({ entry, match }) => {
+                                    const row = document.createElement('div');
+                                    row.style.display = 'flex';
+                                    row.style.alignItems = 'center';
+                                    row.style.gap = '10px';
+                                    row.style.padding = '8px';
+                                    row.style.background = '#0b1220';
+                                    row.style.marginBottom = '6px';
+                                    row.style.borderRadius = '4px';
+
+                                    const checkbox = document.createElement('input');
+                                    checkbox.type = 'checkbox';
+                                    checkbox.checked = match.confidence >= 0.6;
+                                    checkbox.dataset.entryIdx = needsConfirmation.indexOf({ entry, match });
+                                    checkbox.dataset.matchIdx = match.index;
+                                    checkbox.dataset.grade = entry.grade;
+
+                                    const info = document.createElement('div');
+                                    info.style.flex = '1';
+                                    info.style.color = '#d1d5db';
+                                    info.style.fontSize = '0.9rem';
+                                    info.innerHTML = `
+                                        <div><strong>${entry.subject}</strong> (${entry.code}) → <span style="color:#10b981">${entry.grade}</span></div>
+                                        <div style="color:#9ca3af;font-size:0.8rem">Match: ${uiSubjects[match.index].name} (${Math.round(match.confidence * 100)}% confidence)</div>
+                                    `;
+
+                                    row.appendChild(checkbox);
+                                    row.appendChild(info);
+                                    panel.appendChild(row);
+                                });
+
+                                const applyBtn = document.createElement('button');
+                                applyBtn.textContent = 'Apply Selected';
+                                applyBtn.style.padding = '8px 16px';
+                                applyBtn.style.background = '#059669';
+                                applyBtn.style.color = 'white';
+                                applyBtn.style.border = 'none';
+                                applyBtn.style.borderRadius = '4px';
+                                applyBtn.style.marginTop = '10px';
+                                applyBtn.style.cursor = 'pointer';
+
+                                applyBtn.addEventListener('click', () => {
+                                    let applied = 0;
+                                    panel.querySelectorAll('input[type=checkbox]:checked').forEach(cb => {
+                                        const matchIdx = parseInt(cb.dataset.matchIdx);
+                                        const grade = cb.dataset.grade;
+                                        const select = document.getElementById(`sem-${uiSemIndex}-sub-${matchIdx}`);
+                                        if (select && gradeOptions.includes(grade)) {
+                                            select.value = grade;
+                                            select.dispatchEvent(new Event('change', { bubbles: true }));
+                                            applied++;
+                                        }
+                                    });
+
+                                    const msg = document.createElement('div');
+                                    msg.style.color = 'lightgreen';
+                                    msg.style.marginTop = '8px';
+                                    msg.innerHTML = `<strong>✅ ${applied}</strong> additional grade(s) applied.`;
+                                    panel.appendChild(msg);
+                                    applyBtn.remove();
+                                });
+
+                                panel.appendChild(applyBtn);
+                                aiStatus.appendChild(panel);
+                            }
+
+                            statusP.textContent = 'AI analysis complete!';
+                            if (autoApplied === entries.length) {
+                                statusP.innerHTML += ' <span style="color:lightgreen">All grades applied automatically.</span>';
+                            }
+
+                        } catch (err) {
+                            statusP.innerHTML = `<strong style="color:red;">AI analysis failed during parsing.</strong>`;
+                            console.error(err);
+                        }
+                    }).catch(err => {
+                        statusP.innerHTML = `<strong style="color:red;">Text extraction failed.</strong>`;
+                        aiStatus.innerHTML += `<pre style="color:#ffcccc;font-size:12px;margin-top:8px;">${err.message || 'Check console for details.'}</pre>`;
+                        console.error(err);
+                    });
+                }
+            }
+
+            async function extractTextFromFiles(files) {
+                let allText = '';
+                for (const file of files) {
+                    if (file.type.startsWith('image/')) {
+                        // Enhanced OCR with better configuration for academic documents
+                        const result = await Tesseract.recognize(file, 'eng', {
+                            logger: m => console.log('OCR Progress:', m)
+                        });
+                        
+                        // Clean and filter the extracted text
+                        let cleanedText = cleanExtractedText(result.data.text);
+                        allText += '\n' + cleanedText;
+                        
+                    } else if (file.type === 'application/pdf') {
+                        const pdfData = await file.arrayBuffer();
+                        const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items.map(item => item.str).join(' ');
+                            let cleanedPageText = cleanExtractedText(pageText);
+                            allText += '\n' + cleanedPageText;
+                        }
+                    }
+                }
+                
+                // Final cleanup and structure the text
+                allText = finalTextCleanup(allText);
+                console.log('🧹 Final cleaned text:', allText);
+                return allText;
+            }
+
+            function cleanExtractedText(rawText) {
+                if (!rawText) return '';
+                
+                return rawText
+                    // Basic cleanup - keep most characters to avoid breaking things
+                    .replace(/\s+/g, ' ') // Normalize multiple spaces
+                    .replace(/\n\s*\n/g, '\n') // Remove empty lines
+                    .trim();
+            }
+
+            function finalTextCleanup(text) {
+                if (!text) return '';
+                
+                // Simple cleanup to avoid breaking anything
+                return text
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 1)
+                    .join('\n');
+            }
+
+            // Build a robust grade regex from gradeOptions (longer tokens first, escaped)
+            function buildGradeRegex(options) {
+                const toks = (options || []).filter(Boolean).slice().sort((a,b) => b.length - a.length).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+                if (!toks.length) return /\b([A-Z]\+?|S)\b/i;
+                return new RegExp(`\\b(${toks.join('|')})\\b`, 'i');
+            }
+            
+            // NOTE: parsed preview helper removed — we now show only the raw extracted text
+
+            // small helper to escape HTML in debug output
+            function escapeHtml(s) {
+                return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+
+
+            function parseResultText(text) {
+                let semester = null;
+                
+                // Debug: Log what we're looking for
+                console.log("🔍 Looking for semester patterns in text:", text);
+                
+                // PRIORITY 1: Look for "S" followed by a number (most reliable)
+                // This handles "S3", "s3", "S3 Semester", etc.
+                const sPattern = /s(\d+)/gi;
+                let sMatches = [];
+                let match;
+                
+                while ((match = sPattern.exec(text)) !== null) {
+                    const sNumber = match[1];
+                    const context = text.substring(Math.max(0, match.index - 10), match.index + 15);
+                    console.log(`🔍 Found S${sNumber} at context: "${context}"`);
+                    
+                    // Check if this S pattern is likely a semester indicator
+                    const isLikelySemester = (
+                        // Check if followed by "semester" or similar
+                        context.toLowerCase().includes('semester') ||
+                        context.toLowerCase().includes('sem') ||
+                        // Check if it's standalone (not part of course code or student ID)
+                        !context.match(/[a-z0-9]{3,}/i) ||
+                        // Check if it's in a typical semester context
+                        context.toLowerCase().includes('grade') ||
+                        context.toLowerCase().includes('course')
+                    );
+                    
+                    if (isLikelySemester) {
+                        sMatches.push({
+                            number: sNumber,
+                            index: match.index,
+                            context: context,
+                            confidence: isLikelySemester ? 0.9 : 0.7
+                        });
+                    }
+                }
+                
+                // Sort by confidence and take the highest
+                if (sMatches.length > 0) {
+                    sMatches.sort((a, b) => b.confidence - a.confidence);
+                    semester = sMatches[0].number;
+                    console.log(`✅ Found semester from S pattern: ${semester} (context: "${sMatches[0].context}")`);
+                }
+                
+                // PRIORITY 2: If no S pattern found, try other patterns
+                if (!semester) {
+                    const semesterPatterns = [
+                        /(?:semester|sem)\s*(\d+)/i,     // "Semester 3", "SEM 3"
+                        /s(\d+)(?:\s|$|semester|sem)/i,  // "S3 Semester", "S3" at end
+                        /s(\d+)(?![a-z0-9])/i,           // "S3" not followed by alphanumeric
+                        /s(\d+)\s*semester/i             // "S3 Semester" (more specific)
+                    ];
+                    
+                    for (let i = 0; i < semesterPatterns.length; i++) {
+                        const pattern = semesterPatterns[i];
+                        const match = text.match(pattern);
+                        console.log(`🔍 Pattern ${i + 1}: ${pattern} - Match:`, match);
+                        if (match) {
+                            semester = match[1];
+                            console.log(`✅ Found semester: ${semester} with pattern ${i + 1}`);
+                            break;
+                        }
+                    }
+                }
+                
+                // PRIORITY 3: If no S pattern found, try course code analysis
+                // Many KTU courses have semester info in their codes (e.g., CST201 = 2nd year, 1st semester)
+                if (!semester) {
+                    console.log("🔍 No semester found with S patterns, trying course codes...");
+                    
+                    // Look for course codes like CST201, CSL201, etc.
+                    const courseCodeMatch = text.match(/[A-Z]{3}2(\d{2})/g);
+                    if (courseCodeMatch) {
+                        console.log(`🔍 Found course codes: ${courseCodeMatch.join(', ')}`);
+                        
+                        // Analyze the most common semester pattern
+                        const semesterCounts = {};
+                        courseCodeMatch.forEach(code => {
+                            const semInYear = code.match(/[A-Z]{3}2(\d{2})/)[1];
+                            semesterCounts[semInYear] = (semesterCounts[semInYear] || 0) + 1;
+                        });
+                        
+                        // Find the most frequent semester
+                        let mostFrequentSem = null;
+                        let maxCount = 0;
+                        for (const [sem, count] of Object.entries(semesterCounts)) {
+                            if (count > maxCount) {
+                                maxCount = count;
+                                mostFrequentSem = sem;
+                            }
+                        }
+                        
+                        if (mostFrequentSem) {
+                            // Convert course code semester to actual semester number
+                            // CST201 = 2nd year, 1st semester = Semester 3
+                            // CST202 = 2nd year, 2nd semester = Semester 4
+                            const year = 2; // Most common case
+                            const semInYear = parseInt(mostFrequentSem);
+                            semester = ((year - 1) * 2) + semInYear;
+                            console.log(`✅ Found semester from course codes: ${semester} (most frequent: ${mostFrequentSem})`);
+                        }
+                    }
+                }
+                
+                // PRIORITY 4: Final fallback - look for specific patterns
+                if (!semester) {
+                    console.log("🔍 Trying final fallback patterns...");
+                    
+                    // Look for "s3 semester" specifically (your case)
+                    const s3Match = text.match(/s3\s*semester/i);
+                    if (s3Match) {
+                        semester = "3";
+                        console.log(`✅ Found semester with s3 semester pattern: ${semester}`);
+                    }
+                    
+                    // Look for any "s" followed by a single digit in semester context
+                    if (!semester) {
+                        const singleDigitMatch = text.match(/s(\d)(?:\s|$|[^0-9])/i);
+                        if (singleDigitMatch) {
+                            const context = text.substring(Math.max(0, singleDigitMatch.index - 20), singleDigitMatch.index + 20);
+                            // Only accept if it's in a semester-like context
+                            if (context.toLowerCase().includes('semester') || 
+                                context.toLowerCase().includes('grade') || 
+                                context.toLowerCase().includes('course')) {
+                                semester = singleDigitMatch[1];
+                                console.log(`✅ Found semester with single digit pattern: ${semester} (context: "${context}")`);
+                            }
+                        }
+                    }
+                }
+                
+                console.log(`🎯 Final semester result: ${semester}`);
+
+                // NEW APPROACH: Instead of trying to parse subject names from text,
+                // we'll use the predefined subject list for the detected semester
+                // and match grades from the extracted text using predictive algorithms
+                console.log(`🎯 Using predictive approach for semester ${semester}`);
+                
+                const subjects = [];
+                
+                // Get the predefined subjects for this semester
+                const dept = document.getElementById('department-select').value;
+                const semList = departmentSemesters[dept];
+                const semIndex = semList?.findIndex(s => {
+                    const semName = s.name.toLowerCase();
+                    return semName.includes(semester) || 
+                           semName.includes(`semester ${semester}`) ||
+                           semName.includes(`sem ${semester}`);
+                });
+                
+                if (semIndex !== undefined && semIndex >= 0) {
+                    const semesterSubjects = semList[semIndex].subjects;
+                    console.log(`📚 Found ${semesterSubjects.length} predefined subjects for semester ${semester}`);
+                    
+                    // For each predefined subject, try to find a matching grade in the extracted text
+                    for (const predefinedSubject of semesterSubjects) {
+                        try {
+                            console.log(`🔍 Looking for grade for: "${predefinedSubject.name}"`);
+                            
+                            // Use multiple strategies to find the grade
+                            let foundGrade = null;
+                            let foundCode = null;
+                            
+                            // Strategy 1: Look for exact subject name match
+                            const exactMatch = findSubjectGradeByExactName(predefinedSubject.name, text, gradeOptions);
+                            if (exactMatch) {
+                                foundGrade = exactMatch.grade;
+                                foundCode = exactMatch.code;
+                                console.log(`✅ Exact match found: ${foundGrade}`);
+                            }
+                            
+                            // Strategy 2: Look for partial name match
+                            if (!foundGrade) {
+                                const partialMatch = findSubjectGradeByPartialName(predefinedSubject.name, text, gradeOptions);
+                                if (partialMatch) {
+                                    foundGrade = partialMatch.grade;
+                                    foundCode = partialMatch.code;
+                                    console.log(`✅ Partial match found: ${foundGrade}`);
+                                }
+                            }
+                            
+                            // Strategy 3: Look for course code match
+                            if (!foundGrade) {
+                                const codeMatch = findSubjectGradeByCode(predefinedSubject.name, text, gradeOptions);
+                                if (codeMatch) {
+                                    foundGrade = codeMatch.grade;
+                                    foundCode = codeMatch.code;
+                                    console.log(`✅ Code match found: ${foundGrade}`);
+                                }
+                            }
+                            
+                            // Strategy 4: Predictive matching using similarity
+                            if (!foundGrade) {
+                                const predictiveMatch = findSubjectGradeBySimilarity(predefinedSubject.name, text, gradeOptions);
+                                if (predictiveMatch) {
+                                    foundGrade = predictiveMatch.grade;
+                                    foundCode = predictiveMatch.code;
+                                    console.log(`✅ Predictive match found: ${foundGrade}`);
+                                }
+                            }
+                            
+                            // Add the subject with found grade (or null if not found)
+                            subjects.push({
+                                name: predefinedSubject.name,
+                                grade: foundGrade || 'N/A',
+                                code: foundCode || 'N/A'
+                            });
+                            
+                            console.log(`📝 Added subject: "${predefinedSubject.name}" - Grade: ${foundGrade || 'N/A'}`);
+                            
+                        } catch (subjectError) {
+                            console.error(`❌ Error processing predefined subject:`, subjectError);
+                            // Add subject with no grade if there's an error
+                            subjects.push({
+                                name: predefinedSubject.name,
+                                grade: 'N/A',
+                                code: 'N/A'
+                            });
+                        }
+                    }
+                } else {
+                    console.warn(`⚠️ Could not find predefined subjects for semester ${semester}`);
+                }
+                
+                console.log(`📝 Final subjects count: ${subjects.length}`);
+                return { semester, subjects };
+            }
+
+            // Extract structured entries (subject, code, grade, credits) from raw text
+            function extractEntriesFromRawText(raw) {
+                const entries = [];
+                console.log('🔍 Extracting from raw text:', raw);
+
+                // Look for course lines with pattern: SUBJECT NAME CODE GRADE CREDITS
+                // More aggressive pattern matching for KTU grade cards
+                const coursePattern = /([A-Z\s,&]+?)\s+([A-Z]{3}\d{3})\s+([A-Z]\+?|S|P)\s+([\d\.]+)\s+/g;
+                
+                let match;
+                while ((match = coursePattern.exec(raw)) !== null) {
+                    const subject = match[1].replace(/\s+/g, ' ').trim();
+                    const code = match[2].toUpperCase();
+                    const grade = match[3].toUpperCase();
+                    const credits = match[4];
+                    
+                    // Skip if subject is too short or contains only common words
+                    if (subject.length > 3 && !subject.match(/^(Name|Code|Grade|Credits|Month|Year|Total|SGPA)$/i)) {
+                        entries.push({ subject, code, grade, credits });
+                        console.log(`✅ Extracted: ${subject} | ${code} | ${grade} | ${credits}`);
+                    }
+                }
+
+                // Fallback: try line-by-line with more flexible patterns
+                if (entries.length === 0) {
+                    console.log('🔄 Using fallback extraction...');
+                    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 10);
+                    
+                    for (const line of lines) {
+                        // Look for patterns like: "VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS MAT102 B 4.0 May 2024"
+                        const flexPattern = /^([A-Z\s,&]+?)\s+([A-Z]{3}\d{3})\s+([A-Z]\+?|S|P)\s+([\d\.]+)/i;
+                        const m = line.match(flexPattern);
+                        
+                        if (m) {
+                            const subject = m[1].replace(/\s+/g, ' ').trim();
+                            const code = m[2].toUpperCase();
+                            const grade = m[3].toUpperCase();
+                            const credits = m[4];
+                            
+                            if (subject.length > 3) {
+                                entries.push({ subject, code, grade, credits });
+                                console.log(`✅ Fallback extracted: ${subject} | ${code} | ${grade} | ${credits}`);
+                            }
+                        }
+                    }
+                }
+
+                console.log(`📊 Total entries extracted: ${entries.length}`);
+                return entries;
+            }
+
+            // Normalize course/subject names consistently
+            function normalizeCourseName(s) {
+                if (!s) return '';
+                // lowercase, remove punctuation (but keep numbers/letters), collapse spaces
+                return s.toString().toLowerCase()
+                    .replace(/[\u2013\u2014\-–—|\/\\()\[\],:;\.]/g, ' ')
+                    .replace(/[^a-z0-9\s]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
+
+            // Create a comprehensive subject mapping for better matches
+            function createSubjectMapping() {
+                const mapping = new Map();
+                
+                // Common KTU subject mappings (extracted subject -> normalized key)
+                const commonMappings = {
+                    'VECTOR CALCULUS DIFFERENTIAL EQUATIONS AND TRANSFORMS': 'vector calculus differential equations transforms',
+                    'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS': 'vector calculus differential equations transforms',
+                    'ENGINEERING CHEMISTRY': 'engineering chemistry',
+                    'ENGINEERING MECHANICS': 'engineering mechanics',
+                    'BASICS OF CIVIL AND MECHANICAL ENGINEERING': 'basics civil mechanical engineering',
+                    'PROFESSIONAL COMMUNICATION': 'professional communication',
+                    'PROGRAMMING IN C': 'programming c',
+                    'ENGINEERING CHEMISTRY LAB': 'engineering chemistry lab',
+                    'CIVIL AND MECHANICAL WORKSHOP': 'civil mechanical workshop',
+                    'ENGINEERING PHYSICS': 'engineering physics',
+                    'ENGINEERING GRAPHICS': 'engineering graphics',
+                    'BASICS OF ELECTRICAL AND ELECTRONICS ENGINEERING': 'basics electrical electronics engineering',
+                    'ELECTRICAL AND ELECTRONICS WORKSHOP': 'electrical electronics workshop',
+                    'LIFE SKILLS': 'life skills'
+                };
+                
+                for (const [key, value] of Object.entries(commonMappings)) {
+                    mapping.set(key, value);
+                }
+                
+                return mapping;
+            }
+
+            // Improved matching function
+            function findBestMatch(extractedEntry, uiSubjects) {
+                console.log(`🔍 Finding match for: "${extractedEntry.subject}" (${extractedEntry.code})`);
+                
+                const mapping = createSubjectMapping();
+                const extractedNorm = normalizeCourseName(extractedEntry.subject);
+                const extractedCode = extractedEntry.code.replace(/\s+/g, '');
+                
+                // Strategy 1: Exact code match
+                for (let i = 0; i < uiSubjects.length; i++) {
+                    const uiCode = (uiSubjects[i].code || '').toString().replace(/\s+/g, '');
+                    if (uiCode && extractedCode && uiCode === extractedCode) {
+                        console.log(`✅ Code match: ${uiCode}`);
+                        return { index: i, type: 'code', confidence: 1.0 };
+                    }
+                }
+                
+                // Strategy 2: Direct mapping lookup
+                const mappedKey = mapping.get(extractedEntry.subject.toUpperCase());
+                if (mappedKey) {
+                    for (let i = 0; i < uiSubjects.length; i++) {
+                        const uiNorm = normalizeCourseName(uiSubjects[i].name);
+                        if (uiNorm.includes(mappedKey) || mappedKey.includes(uiNorm)) {
+                            console.log(`✅ Mapping match: ${mappedKey} -> ${uiSubjects[i].name}`);
+                            return { index: i, type: 'mapping', confidence: 0.95 };
+                        }
+                    }
+                }
+                
+                // Strategy 3: Keyword-based matching
+                const extractedWords = extractedNorm.split(/\s+/).filter(w => w.length > 2);
+                let bestMatch = { index: -1, score: 0, type: 'none' };
+                
+                for (let i = 0; i < uiSubjects.length; i++) {
+                    const uiNorm = normalizeCourseName(uiSubjects[i].name);
+                    const uiWords = uiNorm.split(/\s+/).filter(w => w.length > 2);
+                    
+                    // Count matching words
+                    let matchingWords = 0;
+                    let totalWords = Math.max(extractedWords.length, uiWords.length);
+                    
+                    for (const word of extractedWords) {
+                        if (uiWords.includes(word)) {
+                            matchingWords++;
+                        }
+                    }
+                    
+                    const score = matchingWords / totalWords;
+                    
+                    // Special bonus for key terms
+                    let bonus = 0;
+                    if (extractedNorm.includes('chemistry') && uiNorm.includes('chemistry')) bonus += 0.2;
+                    if (extractedNorm.includes('mechanics') && uiNorm.includes('mechanics')) bonus += 0.2;
+                    if (extractedNorm.includes('programming') && uiNorm.includes('programming')) bonus += 0.2;
+                    if (extractedNorm.includes('vector') && uiNorm.includes('vector')) bonus += 0.2;
+                    if (extractedNorm.includes('calculus') && uiNorm.includes('calculus')) bonus += 0.2;
+                    if (extractedNorm.includes('workshop') && uiNorm.includes('workshop')) bonus += 0.2;
+                    if (extractedNorm.includes('lab') && uiNorm.includes('lab')) bonus += 0.2;
+                    
+                    const finalScore = Math.min(1.0, score + bonus);
+                    
+                    if (finalScore > bestMatch.score) {
+                        bestMatch = { index: i, score: finalScore, type: 'keyword' };
+                    }
+                    
+                    console.log(`  Checking "${uiSubjects[i].name}": score=${finalScore.toFixed(2)}`);
+                }
+                
+                if (bestMatch.score >= 0.4) {
+                    console.log(`✅ Keyword match: ${uiSubjects[bestMatch.index].name} (score: ${bestMatch.score.toFixed(2)})`);
+                    return { index: bestMatch.index, type: bestMatch.type, confidence: bestMatch.score };
+                }
+                
+                console.log(`❌ No match found for: ${extractedEntry.subject}`);
+                return { index: -1, type: 'none', confidence: 0 };
+            }
+
+            // Split alternative names like "A / B" into candidates
+            function splitAlternatives(name) {
+                if (!name) return [''];
+                // Split on slash, pipe, hyphen variants, or ' / '
+                return name.split(/\s*[\/|\u2013\u2014\-]\s*/).map(s => normalizeCourseName(s)).filter(Boolean);
+            }
+
+            // Word-level Jaccard (set intersection over union)
+            function wordJaccard(a, b) {
+                if (!a || !b) return 0;
+                const as = a.split(/\s+/).filter(Boolean);
+                const bs = b.split(/\s+/).filter(Boolean);
+                const aset = new Set(as);
+                const bset = new Set(bs);
+                let inter = 0;
+                for (const w of aset) if (bset.has(w)) inter++;
+                const union = new Set([...aset, ...bset]).size;
+                return union === 0 ? 0 : inter / union;
+            }
+
+            // Combined similarity: average of Dice bigram and word Jaccard (gives robust results)
+            function stringSimilarity(a, b) {
+                if (!a || !b) return 0;
+                const A = a.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+                const B = b.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (!A || !B) return 0;
+                if (A === B) return 1;
+
+                // Dice's coefficient on bigrams
+                function bigramDice(x, y) {
+                    if (x.length < 2 || y.length < 2) return 0;
+                    const map = new Map();
+                    for (let i = 0; i < x.length - 1; i++) { const g = x.substring(i, i+2); map.set(g, (map.get(g) || 0) + 1); }
+                    let inter = 0;
+                    for (let i = 0; i < y.length - 1; i++) { const g = y.substring(i, i+2); const c = map.get(g) || 0; if (c > 0) { inter++; map.set(g, c-1); } }
+                    const total = (x.length - 1) + (y.length - 1);
+                    return total > 0 ? (2.0 * inter) / total : 0;
+                }
+
+                const bigram = bigramDice(A, B);
+                const jacc = wordJaccard(a.toString().toLowerCase(), b.toString().toLowerCase());
+                // Weighted average — give slightly more weight to word overlap
+                return Math.max(bigram, jacc * 0.95);
+            }
+
+            // Autofill UI grade selects using parsed entries
+            // Options: { fuzzy: boolean, threshold: 0..1 }
+            function autofillUsingEntries(entries, detectedSemester, options = {}) {
+                if (!entries || entries.length === 0) return 0;
+                const fuzzy = !!options.fuzzy;
+                const threshold = typeof options.threshold === 'number' ? options.threshold : 0.85;
+
+                // Determine UI semester index from detectedSemester (semester numbers are 1-based)
+                let uiSemIndex = 0;
+                if (detectedSemester) {
+                    const n = parseInt(detectedSemester, 10);
+                    if (!isNaN(n) && n > 0 && n <= semesters.length) uiSemIndex = n - 1;
+                }
+
+                // Use the currently loaded UI semesters (the global `semesters` variable)
+                const uiSubjects = (semesters[uiSemIndex] && semesters[uiSemIndex].subjects) ? semesters[uiSemIndex].subjects : [];
+
+                let applied = 0;
+
+                function normalizeName(s) {
+                    return (s || '').toString().toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+                }
+
+                for (const entry of entries) {
+                    console.log(`\n🔍 Processing entry: ${entry.subject} (${entry.code}) -> ${entry.grade}`);
+                    
+                    const match = findBestMatch(entry, uiSubjects);
+                    
+                    if (match.index >= 0 && match.confidence >= 0.4 && gradeOptions.includes(entry.grade)) {
+                        const select = document.getElementById(`sem-${uiSemIndex}-sub-${match.index}`);
+                        if (select) {
+                            console.log(`✅ Applying ${entry.grade} to ${uiSubjects[match.index].name}`);
+                            select.value = entry.grade;
+                            select.dispatchEvent(new Event('change', { bubbles: true }));
+                            applied++;
+                        }
+                    } else {
+                        console.log(`❌ Skipped: ${entry.subject} (confidence: ${match.confidence})`);
+                    }
+                }
+
+                return applied;
+            }
+        }
+});

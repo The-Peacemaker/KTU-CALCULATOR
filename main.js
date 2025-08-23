@@ -1028,180 +1028,231 @@ document.addEventListener('DOMContentLoaded', () => {
                     aiStatus.appendChild(statusP);
 
                     extractTextFromFiles(fileArr).then(allText => {
-                        statusP.textContent = 'Text extraction complete. Parsing results...';
-                        
-                        // Show only the raw extracted text for debugging (user requested)
-                        const debugInfo = document.createElement('div');
-                        debugInfo.innerHTML = `
-                            <h4 style="margin-top: 1rem; font-weight: bold;">Extracted Text (raw):</h4>
-                            <pre style="background: #111; padding: 8px; border-radius: 4px; max-height: 240px; overflow-y: auto;">${escapeHtml(allText || 'No text extracted.')}</pre>
-                        `;
-                        aiStatus.appendChild(debugInfo);
-
-                        try {
-                            // Use existing logic to detect semester number only
-                            const aiData = parseResultText(allText || '');
-
-                            if (aiData.semester) {
-                                const semesterInfo = document.createElement('div');
-                                semesterInfo.innerHTML = `
-                                    <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #10b981;">
-                                        <strong>✅ Detected Semester:</strong> ${aiData.semester}
-                                    </div>
-                                `;
-                                aiStatus.appendChild(semesterInfo);
-                            }
-
-                            // Extract subject entries directly from the raw text
-                            const entries = extractEntriesFromRawText(allText || '');
-                            console.log(`📊 Extracted ${entries.length} entries`);
-
-                            if (entries.length === 0) {
-                                statusP.innerHTML = '<strong style="color:orange;">No course entries found in the extracted text.</strong>';
-                                return;
-                            }
-
-                            // Determine UI semester index from detectedSemester
-                            let uiSemIndex = 0;
-                            if (aiData.semester) {
-                                const n = parseInt(aiData.semester, 10);
-                                if (!isNaN(n) && n > 0 && n <= semesters.length) uiSemIndex = n - 1;
-                            }
-                            const uiSubjects = (semesters[uiSemIndex] && semesters[uiSemIndex].subjects) ? semesters[uiSemIndex].subjects : [];
-
-                            console.log(`🎯 Target semester index: ${uiSemIndex}, UI subjects: ${uiSubjects.length}`);
-
-                            // Auto-apply high-confidence matches and show confirmation for others
-                            let autoApplied = 0;
-                            let needsConfirmation = [];
-
-                            entries.forEach((entry, idx) => {
-                                console.log(`\n🔍 Processing: ${entry.subject} (${entry.code}) -> ${entry.grade}`);
-                                const match = findBestMatch(entry, uiSubjects);
-
-                                if (match.index >= 0 && match.confidence >= 0.8 && gradeOptions.includes(entry.grade)) {
-                                    // Auto-apply high-confidence matches
-                                    const select = document.getElementById(`sem-${uiSemIndex}-sub-${match.index}`);
-                                    if (select) {
-                                        console.log(`✅ Auto-applying: ${entry.grade} to ${uiSubjects[match.index].name}`);
-                                        select.value = entry.grade;
-                                        select.dispatchEvent(new Event('change', { bubbles: true }));
-                                        autoApplied++;
-                                    }
-                                } else if (match.index >= 0 && match.confidence >= 0.4) {
-                                    // Add to confirmation list
-                                    needsConfirmation.push({ entry, match, idx });
-                                } else {
-                                    console.log(`❌ No suitable match for: ${entry.subject}`);
-                                }
-                            });
-
-                            // Show results
-                            if (autoApplied > 0) {
-                                const autoMsg = document.createElement('div');
-                                autoMsg.style.marginTop = '0.5rem';
-                                autoMsg.style.color = 'lightgreen';
-                                autoMsg.innerHTML = `<strong>✅ ${autoApplied}</strong> grade(s) automatically applied (high confidence).`;
-                                aiStatus.appendChild(autoMsg);
-                            }
-
-                            if (needsConfirmation.length > 0) {
-                                // Build simple confirmation panel for uncertain matches
-                                const panel = document.createElement('div');
-                                panel.style.marginTop = '0.8rem';
-                                panel.style.background = '#071229';
-                                panel.style.border = '1px solid rgba(255,255,255,0.1)';
-                                panel.style.padding = '12px';
-                                panel.style.borderRadius = '6px';
-
-                                const title = document.createElement('div');
-                                title.style.color = '#cbd5e1';
-                                title.style.fontSize = '0.95rem';
-                                title.style.marginBottom = '10px';
-                                title.textContent = `Review ${needsConfirmation.length} uncertain matches:`;
-                                panel.appendChild(title);
-
-                                needsConfirmation.forEach(({ entry, match }) => {
-                                    const row = document.createElement('div');
-                                    row.style.display = 'flex';
-                                    row.style.alignItems = 'center';
-                                    row.style.gap = '10px';
-                                    row.style.padding = '8px';
-                                    row.style.background = '#0b1220';
-                                    row.style.marginBottom = '6px';
-                                    row.style.borderRadius = '4px';
-
-                                    const checkbox = document.createElement('input');
-                                    checkbox.type = 'checkbox';
-                                    checkbox.checked = match.confidence >= 0.6;
-                                    checkbox.dataset.entryIdx = needsConfirmation.indexOf({ entry, match });
-                                    checkbox.dataset.matchIdx = match.index;
-                                    checkbox.dataset.grade = entry.grade;
-
-                                    const info = document.createElement('div');
-                                    info.style.flex = '1';
-                                    info.style.color = '#d1d5db';
-                                    info.style.fontSize = '0.9rem';
-                                    info.innerHTML = `
-                                        <div><strong>${entry.subject}</strong> (${entry.code}) → <span style="color:#10b981">${entry.grade}</span></div>
-                                        <div style="color:#9ca3af;font-size:0.8rem">Match: ${uiSubjects[match.index].name} (${Math.round(match.confidence * 100)}% confidence)</div>
-                                    `;
-
-                                    row.appendChild(checkbox);
-                                    row.appendChild(info);
-                                    panel.appendChild(row);
-                                });
-
-                                const applyBtn = document.createElement('button');
-                                applyBtn.textContent = 'Apply Selected';
-                                applyBtn.style.padding = '8px 16px';
-                                applyBtn.style.background = '#059669';
-                                applyBtn.style.color = 'white';
-                                applyBtn.style.border = 'none';
-                                applyBtn.style.borderRadius = '4px';
-                                applyBtn.style.marginTop = '10px';
-                                applyBtn.style.cursor = 'pointer';
-
-                                applyBtn.addEventListener('click', () => {
-                                    let applied = 0;
-                                    panel.querySelectorAll('input[type=checkbox]:checked').forEach(cb => {
-                                        const matchIdx = parseInt(cb.dataset.matchIdx);
-                                        const grade = cb.dataset.grade;
-                                        const select = document.getElementById(`sem-${uiSemIndex}-sub-${matchIdx}`);
-                                        if (select && gradeOptions.includes(grade)) {
-                                            select.value = grade;
-                                            select.dispatchEvent(new Event('change', { bubbles: true }));
-                                            applied++;
-                                        }
-                                    });
-
-                                    const msg = document.createElement('div');
-                                    msg.style.color = 'lightgreen';
-                                    msg.style.marginTop = '8px';
-                                    msg.innerHTML = `<strong>✅ ${applied}</strong> additional grade(s) applied.`;
-                                    panel.appendChild(msg);
-                                    applyBtn.remove();
-                                });
-
-                                panel.appendChild(applyBtn);
-                                aiStatus.appendChild(panel);
-                            }
-
-                            statusP.textContent = 'AI analysis complete!';
-                            if (autoApplied === entries.length) {
-                                statusP.innerHTML += ' <span style="color:lightgreen">All grades applied automatically.</span>';
-                            }
-
-                        } catch (err) {
-                            statusP.innerHTML = `<strong style="color:red;">AI analysis failed during parsing.</strong>`;
-                            console.error(err);
-                        }
+                        // Process each file individually for better semester detection
+                        processFilesIndividually(fileArr, statusP);
                     }).catch(err => {
                         statusP.innerHTML = `<strong style="color:red;">Text extraction failed.</strong>`;
                         aiStatus.innerHTML += `<pre style="color:#ffcccc;font-size:12px;margin-top:8px;">${err.message || 'Check console for details.'}</pre>`;
                         console.error(err);
                     });
                 }
+            }
+
+            async function processFilesIndividually(fileArr, statusP) {
+                let totalAutoApplied = 0;
+                let allNeedsConfirmation = [];
+
+                for (let i = 0; i < fileArr.length; i++) {
+                    const file = fileArr[i];
+                    
+                    // Create file-specific section
+                    const fileSection = document.createElement('div');
+                    fileSection.style.marginTop = '1rem';
+                    fileSection.style.border = '1px solid rgba(255,255,255,0.1)';
+                    fileSection.style.borderRadius = '6px';
+                    fileSection.style.padding = '12px';
+                    fileSection.style.background = '#0a1019';
+                    
+                    const fileHeader = document.createElement('h4');
+                    fileHeader.style.color = '#60a5fa';
+                    fileHeader.style.marginBottom = '8px';
+                    fileHeader.style.fontSize = '0.95rem';
+                    fileHeader.textContent = `📄 Processing: ${file.name}`;
+                    fileSection.appendChild(fileHeader);
+                    
+                    aiStatus.appendChild(fileSection);
+
+                    try {
+                        // Extract text from individual file
+                        const fileText = await extractTextFromFiles([file]);
+                        
+                        // Show extracted text for this file
+                        const debugInfo = document.createElement('div');
+                        debugInfo.innerHTML = `
+                            <h5 style="margin-top: 0.5rem; font-weight: bold; color: #9ca3af;">Extracted Text:</h5>
+                            <pre style="background: #111; padding: 8px; border-radius: 4px; max-height: 120px; overflow-y: auto; font-size: 0.8rem;">${escapeHtml(fileText || 'No text extracted.')}</pre>
+                        `;
+                        fileSection.appendChild(debugInfo);
+
+                        // Detect semester for this specific file
+                        const aiData = parseResultText(fileText || '');
+                        
+                        if (aiData.semester) {
+                            const semesterInfo = document.createElement('div');
+                            semesterInfo.innerHTML = `
+                                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #10b981;">
+                                    <strong>✅ Detected Semester:</strong> ${aiData.semester}
+                                </div>
+                            `;
+                            fileSection.appendChild(semesterInfo);
+                        }
+
+                        // Extract entries from this file
+                        const entries = extractEntriesFromRawText(fileText || '');
+                        console.log(`📊 File ${i+1}: Extracted ${entries.length} entries`);
+
+                        if (entries.length === 0) {
+                            const noEntriesMsg = document.createElement('div');
+                            noEntriesMsg.style.color = '#f59e0b';
+                            noEntriesMsg.style.fontSize = '0.875rem';
+                            noEntriesMsg.innerHTML = '<strong>⚠️ No course entries found in this file.</strong>';
+                            fileSection.appendChild(noEntriesMsg);
+                            continue;
+                        }
+
+                        // Determine UI semester index for this file
+                        let uiSemIndex = 0;
+                        if (aiData.semester) {
+                            const n = parseInt(aiData.semester, 10);
+                            if (!isNaN(n) && n > 0 && n <= semesters.length) uiSemIndex = n - 1;
+                        }
+                        const uiSubjects = (semesters[uiSemIndex] && semesters[uiSemIndex].subjects) ? semesters[uiSemIndex].subjects : [];
+
+                        console.log(`🎯 File ${i+1} -> Semester index: ${uiSemIndex}, UI subjects: ${uiSubjects.length}`);
+
+                        // Process entries for this file
+                        let fileAutoApplied = 0;
+                        let fileNeedsConfirmation = [];
+
+                        entries.forEach((entry, idx) => {
+                            console.log(`\n🔍 File ${i+1} Processing: ${entry.subject} (${entry.code}) -> ${entry.grade}`);
+                            const match = findBestMatch(entry, uiSubjects);
+
+                            if (match.index >= 0 && match.confidence >= 0.8 && gradeOptions.includes(entry.grade)) {
+                                // Auto-apply high-confidence matches
+                                const select = document.getElementById(`sem-${uiSemIndex}-sub-${match.index}`);
+                                if (select) {
+                                    console.log(`✅ Auto-applying: ${entry.grade} to ${uiSubjects[match.index].name}`);
+                                    select.value = entry.grade;
+                                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                                    fileAutoApplied++;
+                                }
+                            } else if (match.index >= 0 && match.confidence >= 0.4) {
+                                // Add to confirmation list with file context
+                                fileNeedsConfirmation.push({ entry, match, idx, fileName: file.name, uiSemIndex });
+                            } else {
+                                console.log(`❌ No suitable match for: ${entry.subject}`);
+                            }
+                        });
+
+                        // Show results for this file
+                        if (fileAutoApplied > 0) {
+                            const autoMsg = document.createElement('div');
+                            autoMsg.style.marginTop = '0.5rem';
+                            autoMsg.style.color = 'lightgreen';
+                            autoMsg.style.fontSize = '0.875rem';
+                            autoMsg.innerHTML = `<strong>✅ ${fileAutoApplied}</strong> grade(s) automatically applied from this file.`;
+                            fileSection.appendChild(autoMsg);
+                            totalAutoApplied += fileAutoApplied;
+                        }
+
+                        allNeedsConfirmation = allNeedsConfirmation.concat(fileNeedsConfirmation);
+
+                    } catch (error) {
+                        console.error(`Error processing file ${file.name}:`, error);
+                        const errorMsg = document.createElement('div');
+                        errorMsg.style.color = '#ef4444';
+                        errorMsg.style.fontSize = '0.875rem';
+                        errorMsg.innerHTML = `<strong>❌ Error processing this file:</strong> ${error.message}`;
+                        fileSection.appendChild(errorMsg);
+                    }
+                }
+
+                // Show global confirmation panel if needed
+                if (allNeedsConfirmation.length > 0) {
+                    showMultiFileConfirmationPanel(allNeedsConfirmation);
+                }
+
+                // Update main status
+                statusP.textContent = `Analysis complete! Processed ${fileArr.length} file(s).`;
+                if (totalAutoApplied > 0) {
+                    statusP.innerHTML += ` <span style="color:lightgreen">${totalAutoApplied} total grade(s) applied automatically.</span>`;
+                }
+            }
+
+            function showMultiFileConfirmationPanel(needsConfirmation) {
+                // Build simple confirmation panel for uncertain matches across all files
+                const panel = document.createElement('div');
+                panel.style.marginTop = '0.8rem';
+                panel.style.background = '#071229';
+                panel.style.border = '1px solid rgba(255,255,255,0.1)';
+                panel.style.padding = '12px';
+                panel.style.borderRadius = '6px';
+
+                const title = document.createElement('div');
+                title.style.color = '#cbd5e1';
+                title.style.fontSize = '0.95rem';
+                title.style.marginBottom = '10px';
+                title.textContent = `Review ${needsConfirmation.length} uncertain matches across all files:`;
+                panel.appendChild(title);
+
+                needsConfirmation.forEach(({ entry, match, fileName, uiSemIndex }) => {
+                    const uiSubjects = (semesters[uiSemIndex] && semesters[uiSemIndex].subjects) ? semesters[uiSemIndex].subjects : [];
+                    
+                    const row = document.createElement('div');
+                    row.style.display = 'flex';
+                    row.style.alignItems = 'center';
+                    row.style.gap = '10px';
+                    row.style.padding = '8px';
+                    row.style.background = '#0b1220';
+                    row.style.marginBottom = '6px';
+                    row.style.borderRadius = '4px';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = match.confidence >= 0.6;
+                    checkbox.dataset.matchIdx = match.index;
+                    checkbox.dataset.grade = entry.grade;
+                    checkbox.dataset.semIndex = uiSemIndex;
+
+                    const info = document.createElement('div');
+                    info.style.flex = '1';
+                    info.style.color = '#d1d5db';
+                    info.style.fontSize = '0.9rem';
+                    info.innerHTML = `
+                        <div><strong>${entry.subject}</strong> (${entry.code}) → <span style="color:#10b981">${entry.grade}</span></div>
+                        <div style="color:#9ca3af;font-size:0.8rem">File: ${fileName} | Match: ${uiSubjects[match.index]?.name || 'Unknown'} (${Math.round(match.confidence * 100)}% confidence)</div>
+                    `;
+
+                    row.appendChild(checkbox);
+                    row.appendChild(info);
+                    panel.appendChild(row);
+                });
+
+                const applyBtn = document.createElement('button');
+                applyBtn.textContent = 'Apply Selected';
+                applyBtn.style.padding = '8px 16px';
+                applyBtn.style.background = '#059669';
+                applyBtn.style.color = 'white';
+                applyBtn.style.border = 'none';
+                applyBtn.style.borderRadius = '4px';
+                applyBtn.style.marginTop = '10px';
+                applyBtn.style.cursor = 'pointer';
+
+                applyBtn.addEventListener('click', () => {
+                    let applied = 0;
+                    panel.querySelectorAll('input[type=checkbox]:checked').forEach(cb => {
+                        const matchIdx = parseInt(cb.dataset.matchIdx);
+                        const grade = cb.dataset.grade;
+                        const semIndex = parseInt(cb.dataset.semIndex);
+                        const select = document.getElementById(`sem-${semIndex}-sub-${matchIdx}`);
+                        if (select && gradeOptions.includes(grade)) {
+                            select.value = grade;
+                            select.dispatchEvent(new Event('change', { bubbles: true }));
+                            applied++;
+                        }
+                    });
+
+                    const msg = document.createElement('div');
+                    msg.style.color = 'lightgreen';
+                    msg.style.marginTop = '8px';
+                    msg.innerHTML = `<strong>✅ ${applied}</strong> additional grade(s) applied.`;
+                    panel.appendChild(msg);
+                    applyBtn.remove();
+                });
+
+                panel.appendChild(applyBtn);
+                aiStatus.appendChild(panel);
             }
 
             async function extractTextFromFiles(files) {
