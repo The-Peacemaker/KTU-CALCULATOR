@@ -45,9 +45,16 @@ An advanced, feature-rich CGPA calculator for KTU students with AI-powered grade
 
 ## 🖼️ Screenshots
 
+### 📊 Core Features
 | CGPA Calculator | Internal Mark Calculator |
 | :-------------: | :----------------------: |
 | ![CGPA Calculator Screenshot](Screenshot/SS1.png) | ![Internal Mark Calculator Screenshot](Screenshot/SS2.png) |
+
+### 🤖 AI-Powered Grade Analysis
+| AI Grade Card Upload & Analysis |
+| :-----------------------------: |
+| ![AI Feature Screenshot](Screenshot/SS3.png) |
+| *Upload your result card (PDF/image) and let AI automatically extract and apply grades* |
 
 ---
 
