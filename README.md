@@ -1,4 +1,4 @@
-# KTU CGPA Calculator 🚀
+# [KTU CGPA Calculator](https://ktucalculator.netlify.app/) 🚀
 
 ![Project Banner](Screenshot/SS1.png)
 
