@@ -17,8 +17,8 @@ const departmentSemesters = {
         { name: 'SEMESTER 2', subjects: [
             { code: '', name: 'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS', credit: 4 },
             { code: '', name: 'ENGINEERING PHYSICS A / ENGINEERING CHEMISTRY', credit: 4 },
-            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 4 },
-            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 3 },
+            { code: '', name: 'ENGINEERING MECHANICS / ENGINEERING GRAPHICS', credit: 3 },
+            { code: '', name: 'BASICS OF CIVIL & MECHANICAL ENGINEERING / BASICS OF ELECTRICAL & ELECTRONICS ENGINEERING', credit: 4 },
             { code: '', name: 'ENGINEERING PHYSICS LAB / ENGINEERING CHEMISTRY LAB', credit: 1 },
             { code: '', name: 'CIVIL & MECHANICAL WORKSHOP / ELECTRICAL & ELECTRONICS WORKSHOP', credit: 1 },
             { code: '', name: 'PROGRAMMING IN C', credit: 4 },
@@ -975,4 +975,789 @@ document.addEventListener('DOMContentLoaded', () => {
             buttons[nextIdx].focus();
         }
     });
+
+        // --- ULTIMATE AI FEATURE: MODERN FILE UPLOAD ---
+        const uploadBox = document.getElementById('uploadBox');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const resultFiles = document.getElementById('resultFiles');
+        const filePreview = document.getElementById('filePreview');
+        const aiStatus = document.getElementById('aiStatus');
+
+        if (uploadBox && uploadBtn && resultFiles && filePreview && aiStatus) {
+            uploadBtn.addEventListener('click', () => resultFiles.click());
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    uploadBox.classList.add('dragover');
+                });
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadBox.addEventListener(eventName, (e) => {
+                    e.preventDefault();
+                    uploadBox.classList.remove('dragover');
+                });
+            });
+            
+            uploadBox.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files));
+            resultFiles.addEventListener('change', (e) => handleFiles(e.target.files));
+
+            function handleFiles(files) {
+                filePreview.innerHTML = '';
+                aiStatus.innerHTML = ''; // Clear status on new upload
+                const fileArr = Array.from(files);
+                
+                fileArr.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.alt = file.name;
+                        filePreview.appendChild(img);
+                    } else if (file.type === 'application/pdf') {
+                        const pdfDiv = document.createElement('div');
+                        pdfDiv.className = 'pdf-thumb';
+                        pdfDiv.textContent = 'PDF';
+                        filePreview.appendChild(pdfDiv);
+                    }
+                });
+
+                if (fileArr.length > 0) {
+                    const statusP = document.createElement('p');
+                    statusP.textContent = 'Analyzing files...';
+                    aiStatus.appendChild(statusP);
+
+                    extractTextFromFiles(fileArr).then(allText => {
+                        statusP.textContent = 'Text extraction complete. Parsing results...';
+                        
+                        // Show only the raw extracted text for debugging (user requested)
+                        const debugInfo = document.createElement('div');
+                        debugInfo.innerHTML = `
+                            <h4 style="margin-top: 1rem; font-weight: bold;">Extracted Text (raw):</h4>
+                            <pre style="background: #111; padding: 8px; border-radius: 4px; max-height: 240px; overflow-y: auto;">${escapeHtml(allText || 'No text extracted.')}</pre>
+                        `;
+                        aiStatus.appendChild(debugInfo);
+
+                        try {
+                            // Use existing logic to detect semester number only
+                            const aiData = parseResultText(allText || '');
+
+                            if (aiData.semester) {
+                                const semesterInfo = document.createElement('div');
+                                semesterInfo.innerHTML = `
+                                    <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #10b981;">
+                                        <strong>✅ Detected Semester:</strong> ${aiData.semester}
+                                    </div>
+                                `;
+                                aiStatus.appendChild(semesterInfo);
+                            }
+
+                            // Extract subject entries directly from the raw text
+                            const entries = extractEntriesFromRawText(allText || '');
+                            console.log(`📊 Extracted ${entries.length} entries`);
+
+                            if (entries.length === 0) {
+                                statusP.innerHTML = '<strong style="color:orange;">No course entries found in the extracted text.</strong>';
+                                return;
+                            }
+
+                            // Determine UI semester index from detectedSemester
+                            let uiSemIndex = 0;
+                            if (aiData.semester) {
+                                const n = parseInt(aiData.semester, 10);
+                                if (!isNaN(n) && n > 0 && n <= semesters.length) uiSemIndex = n - 1;
+                            }
+                            const uiSubjects = (semesters[uiSemIndex] && semesters[uiSemIndex].subjects) ? semesters[uiSemIndex].subjects : [];
+
+                            console.log(`🎯 Target semester index: ${uiSemIndex}, UI subjects: ${uiSubjects.length}`);
+
+                            // Auto-apply high-confidence matches and show confirmation for others
+                            let autoApplied = 0;
+                            let needsConfirmation = [];
+
+                            entries.forEach((entry, idx) => {
+                                console.log(`\n🔍 Processing: ${entry.subject} (${entry.code}) -> ${entry.grade}`);
+                                const match = findBestMatch(entry, uiSubjects);
+
+                                if (match.index >= 0 && match.confidence >= 0.8 && gradeOptions.includes(entry.grade)) {
+                                    // Auto-apply high-confidence matches
+                                    const select = document.getElementById(`sem-${uiSemIndex}-sub-${match.index}`);
+                                    if (select) {
+                                        console.log(`✅ Auto-applying: ${entry.grade} to ${uiSubjects[match.index].name}`);
+                                        select.value = entry.grade;
+                                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                                        autoApplied++;
+                                    }
+                                } else if (match.index >= 0 && match.confidence >= 0.4) {
+                                    // Add to confirmation list
+                                    needsConfirmation.push({ entry, match, idx });
+                                } else {
+                                    console.log(`❌ No suitable match for: ${entry.subject}`);
+                                }
+                            });
+
+                            // Show results
+                            if (autoApplied > 0) {
+                                const autoMsg = document.createElement('div');
+                                autoMsg.style.marginTop = '0.5rem';
+                                autoMsg.style.color = 'lightgreen';
+                                autoMsg.innerHTML = `<strong>✅ ${autoApplied}</strong> grade(s) automatically applied (high confidence).`;
+                                aiStatus.appendChild(autoMsg);
+                            }
+
+                            if (needsConfirmation.length > 0) {
+                                // Build simple confirmation panel for uncertain matches
+                                const panel = document.createElement('div');
+                                panel.style.marginTop = '0.8rem';
+                                panel.style.background = '#071229';
+                                panel.style.border = '1px solid rgba(255,255,255,0.1)';
+                                panel.style.padding = '12px';
+                                panel.style.borderRadius = '6px';
+
+                                const title = document.createElement('div');
+                                title.style.color = '#cbd5e1';
+                                title.style.fontSize = '0.95rem';
+                                title.style.marginBottom = '10px';
+                                title.textContent = `Review ${needsConfirmation.length} uncertain matches:`;
+                                panel.appendChild(title);
+
+                                needsConfirmation.forEach(({ entry, match }) => {
+                                    const row = document.createElement('div');
+                                    row.style.display = 'flex';
+                                    row.style.alignItems = 'center';
+                                    row.style.gap = '10px';
+                                    row.style.padding = '8px';
+                                    row.style.background = '#0b1220';
+                                    row.style.marginBottom = '6px';
+                                    row.style.borderRadius = '4px';
+
+                                    const checkbox = document.createElement('input');
+                                    checkbox.type = 'checkbox';
+                                    checkbox.checked = match.confidence >= 0.6;
+                                    checkbox.dataset.entryIdx = needsConfirmation.indexOf({ entry, match });
+                                    checkbox.dataset.matchIdx = match.index;
+                                    checkbox.dataset.grade = entry.grade;
+
+                                    const info = document.createElement('div');
+                                    info.style.flex = '1';
+                                    info.style.color = '#d1d5db';
+                                    info.style.fontSize = '0.9rem';
+                                    info.innerHTML = `
+                                        <div><strong>${entry.subject}</strong> (${entry.code}) → <span style="color:#10b981">${entry.grade}</span></div>
+                                        <div style="color:#9ca3af;font-size:0.8rem">Match: ${uiSubjects[match.index].name} (${Math.round(match.confidence * 100)}% confidence)</div>
+                                    `;
+
+                                    row.appendChild(checkbox);
+                                    row.appendChild(info);
+                                    panel.appendChild(row);
+                                });
+
+                                const applyBtn = document.createElement('button');
+                                applyBtn.textContent = 'Apply Selected';
+                                applyBtn.style.padding = '8px 16px';
+                                applyBtn.style.background = '#059669';
+                                applyBtn.style.color = 'white';
+                                applyBtn.style.border = 'none';
+                                applyBtn.style.borderRadius = '4px';
+                                applyBtn.style.marginTop = '10px';
+                                applyBtn.style.cursor = 'pointer';
+
+                                applyBtn.addEventListener('click', () => {
+                                    let applied = 0;
+                                    panel.querySelectorAll('input[type=checkbox]:checked').forEach(cb => {
+                                        const matchIdx = parseInt(cb.dataset.matchIdx);
+                                        const grade = cb.dataset.grade;
+                                        const select = document.getElementById(`sem-${uiSemIndex}-sub-${matchIdx}`);
+                                        if (select && gradeOptions.includes(grade)) {
+                                            select.value = grade;
+                                            select.dispatchEvent(new Event('change', { bubbles: true }));
+                                            applied++;
+                                        }
+                                    });
+
+                                    const msg = document.createElement('div');
+                                    msg.style.color = 'lightgreen';
+                                    msg.style.marginTop = '8px';
+                                    msg.innerHTML = `<strong>✅ ${applied}</strong> additional grade(s) applied.`;
+                                    panel.appendChild(msg);
+                                    applyBtn.remove();
+                                });
+
+                                panel.appendChild(applyBtn);
+                                aiStatus.appendChild(panel);
+                            }
+
+                            statusP.textContent = 'AI analysis complete!';
+                            if (autoApplied === entries.length) {
+                                statusP.innerHTML += ' <span style="color:lightgreen">All grades applied automatically.</span>';
+                            }
+
+                        } catch (err) {
+                            statusP.innerHTML = `<strong style="color:red;">AI analysis failed during parsing.</strong>`;
+                            console.error(err);
+                        }
+                    }).catch(err => {
+                        statusP.innerHTML = `<strong style="color:red;">Text extraction failed.</strong>`;
+                        aiStatus.innerHTML += `<pre style="color:#ffcccc;font-size:12px;margin-top:8px;">${err.message || 'Check console for details.'}</pre>`;
+                        console.error(err);
+                    });
+                }
+            }
+
+            async function extractTextFromFiles(files) {
+                let allText = '';
+                for (const file of files) {
+                    if (file.type.startsWith('image/')) {
+                        // Enhanced OCR with better configuration for academic documents
+                        const result = await Tesseract.recognize(file, 'eng', {
+                            logger: m => console.log('OCR Progress:', m)
+                        });
+                        
+                        // Clean and filter the extracted text
+                        let cleanedText = cleanExtractedText(result.data.text);
+                        allText += '\n' + cleanedText;
+                        
+                    } else if (file.type === 'application/pdf') {
+                        const pdfData = await file.arrayBuffer();
+                        const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items.map(item => item.str).join(' ');
+                            let cleanedPageText = cleanExtractedText(pageText);
+                            allText += '\n' + cleanedPageText;
+                        }
+                    }
+                }
+                
+                // Final cleanup and structure the text
+                allText = finalTextCleanup(allText);
+                console.log('🧹 Final cleaned text:', allText);
+                return allText;
+            }
+
+            function cleanExtractedText(rawText) {
+                if (!rawText) return '';
+                
+                return rawText
+                    // Basic cleanup - keep most characters to avoid breaking things
+                    .replace(/\s+/g, ' ') // Normalize multiple spaces
+                    .replace(/\n\s*\n/g, '\n') // Remove empty lines
+                    .trim();
+            }
+
+            function finalTextCleanup(text) {
+                if (!text) return '';
+                
+                // Simple cleanup to avoid breaking anything
+                return text
+                    .split('\n')
+                    .map(line => line.trim())
+                    .filter(line => line.length > 1)
+                    .join('\n');
+            }
+
+            // Build a robust grade regex from gradeOptions (longer tokens first, escaped)
+            function buildGradeRegex(options) {
+                const toks = (options || []).filter(Boolean).slice().sort((a,b) => b.length - a.length).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+                if (!toks.length) return /\b([A-Z]\+?|S)\b/i;
+                return new RegExp(`\\b(${toks.join('|')})\\b`, 'i');
+            }
+            
+            // NOTE: parsed preview helper removed — we now show only the raw extracted text
+
+            // small helper to escape HTML in debug output
+            function escapeHtml(s) {
+                return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+
+
+            function parseResultText(text) {
+                let semester = null;
+                
+                // Debug: Log what we're looking for
+                console.log("🔍 Looking for semester patterns in text:", text);
+                
+                // PRIORITY 1: Look for "S" followed by a number (most reliable)
+                // This handles "S3", "s3", "S3 Semester", etc.
+                const sPattern = /s(\d+)/gi;
+                let sMatches = [];
+                let match;
+                
+                while ((match = sPattern.exec(text)) !== null) {
+                    const sNumber = match[1];
+                    const context = text.substring(Math.max(0, match.index - 10), match.index + 15);
+                    console.log(`🔍 Found S${sNumber} at context: "${context}"`);
+                    
+                    // Check if this S pattern is likely a semester indicator
+                    const isLikelySemester = (
+                        // Check if followed by "semester" or similar
+                        context.toLowerCase().includes('semester') ||
+                        context.toLowerCase().includes('sem') ||
+                        // Check if it's standalone (not part of course code or student ID)
+                        !context.match(/[a-z0-9]{3,}/i) ||
+                        // Check if it's in a typical semester context
+                        context.toLowerCase().includes('grade') ||
+                        context.toLowerCase().includes('course')
+                    );
+                    
+                    if (isLikelySemester) {
+                        sMatches.push({
+                            number: sNumber,
+                            index: match.index,
+                            context: context,
+                            confidence: isLikelySemester ? 0.9 : 0.7
+                        });
+                    }
+                }
+                
+                // Sort by confidence and take the highest
+                if (sMatches.length > 0) {
+                    sMatches.sort((a, b) => b.confidence - a.confidence);
+                    semester = sMatches[0].number;
+                    console.log(`✅ Found semester from S pattern: ${semester} (context: "${sMatches[0].context}")`);
+                }
+                
+                // PRIORITY 2: If no S pattern found, try other patterns
+                if (!semester) {
+                    const semesterPatterns = [
+                        /(?:semester|sem)\s*(\d+)/i,     // "Semester 3", "SEM 3"
+                        /s(\d+)(?:\s|$|semester|sem)/i,  // "S3 Semester", "S3" at end
+                        /s(\d+)(?![a-z0-9])/i,           // "S3" not followed by alphanumeric
+                        /s(\d+)\s*semester/i             // "S3 Semester" (more specific)
+                    ];
+                    
+                    for (let i = 0; i < semesterPatterns.length; i++) {
+                        const pattern = semesterPatterns[i];
+                        const match = text.match(pattern);
+                        console.log(`🔍 Pattern ${i + 1}: ${pattern} - Match:`, match);
+                        if (match) {
+                            semester = match[1];
+                            console.log(`✅ Found semester: ${semester} with pattern ${i + 1}`);
+                            break;
+                        }
+                    }
+                }
+                
+                // PRIORITY 3: If no S pattern found, try course code analysis
+                // Many KTU courses have semester info in their codes (e.g., CST201 = 2nd year, 1st semester)
+                if (!semester) {
+                    console.log("🔍 No semester found with S patterns, trying course codes...");
+                    
+                    // Look for course codes like CST201, CSL201, etc.
+                    const courseCodeMatch = text.match(/[A-Z]{3}2(\d{2})/g);
+                    if (courseCodeMatch) {
+                        console.log(`🔍 Found course codes: ${courseCodeMatch.join(', ')}`);
+                        
+                        // Analyze the most common semester pattern
+                        const semesterCounts = {};
+                        courseCodeMatch.forEach(code => {
+                            const semInYear = code.match(/[A-Z]{3}2(\d{2})/)[1];
+                            semesterCounts[semInYear] = (semesterCounts[semInYear] || 0) + 1;
+                        });
+                        
+                        // Find the most frequent semester
+                        let mostFrequentSem = null;
+                        let maxCount = 0;
+                        for (const [sem, count] of Object.entries(semesterCounts)) {
+                            if (count > maxCount) {
+                                maxCount = count;
+                                mostFrequentSem = sem;
+                            }
+                        }
+                        
+                        if (mostFrequentSem) {
+                            // Convert course code semester to actual semester number
+                            // CST201 = 2nd year, 1st semester = Semester 3
+                            // CST202 = 2nd year, 2nd semester = Semester 4
+                            const year = 2; // Most common case
+                            const semInYear = parseInt(mostFrequentSem);
+                            semester = ((year - 1) * 2) + semInYear;
+                            console.log(`✅ Found semester from course codes: ${semester} (most frequent: ${mostFrequentSem})`);
+                        }
+                    }
+                }
+                
+                // PRIORITY 4: Final fallback - look for specific patterns
+                if (!semester) {
+                    console.log("🔍 Trying final fallback patterns...");
+                    
+                    // Look for "s3 semester" specifically (your case)
+                    const s3Match = text.match(/s3\s*semester/i);
+                    if (s3Match) {
+                        semester = "3";
+                        console.log(`✅ Found semester with s3 semester pattern: ${semester}`);
+                    }
+                    
+                    // Look for any "s" followed by a single digit in semester context
+                    if (!semester) {
+                        const singleDigitMatch = text.match(/s(\d)(?:\s|$|[^0-9])/i);
+                        if (singleDigitMatch) {
+                            const context = text.substring(Math.max(0, singleDigitMatch.index - 20), singleDigitMatch.index + 20);
+                            // Only accept if it's in a semester-like context
+                            if (context.toLowerCase().includes('semester') || 
+                                context.toLowerCase().includes('grade') || 
+                                context.toLowerCase().includes('course')) {
+                                semester = singleDigitMatch[1];
+                                console.log(`✅ Found semester with single digit pattern: ${semester} (context: "${context}")`);
+                            }
+                        }
+                    }
+                }
+                
+                console.log(`🎯 Final semester result: ${semester}`);
+
+                // NEW APPROACH: Instead of trying to parse subject names from text,
+                // we'll use the predefined subject list for the detected semester
+                // and match grades from the extracted text using predictive algorithms
+                console.log(`🎯 Using predictive approach for semester ${semester}`);
+                
+                const subjects = [];
+                
+                // Get the predefined subjects for this semester
+                const dept = document.getElementById('department-select').value;
+                const semList = departmentSemesters[dept];
+                const semIndex = semList?.findIndex(s => {
+                    const semName = s.name.toLowerCase();
+                    return semName.includes(semester) || 
+                           semName.includes(`semester ${semester}`) ||
+                           semName.includes(`sem ${semester}`);
+                });
+                
+                if (semIndex !== undefined && semIndex >= 0) {
+                    const semesterSubjects = semList[semIndex].subjects;
+                    console.log(`📚 Found ${semesterSubjects.length} predefined subjects for semester ${semester}`);
+                    
+                    // For each predefined subject, try to find a matching grade in the extracted text
+                    for (const predefinedSubject of semesterSubjects) {
+                        try {
+                            console.log(`🔍 Looking for grade for: "${predefinedSubject.name}"`);
+                            
+                            // Use multiple strategies to find the grade
+                            let foundGrade = null;
+                            let foundCode = null;
+                            
+                            // Strategy 1: Look for exact subject name match
+                            const exactMatch = findSubjectGradeByExactName(predefinedSubject.name, text, gradeOptions);
+                            if (exactMatch) {
+                                foundGrade = exactMatch.grade;
+                                foundCode = exactMatch.code;
+                                console.log(`✅ Exact match found: ${foundGrade}`);
+                            }
+                            
+                            // Strategy 2: Look for partial name match
+                            if (!foundGrade) {
+                                const partialMatch = findSubjectGradeByPartialName(predefinedSubject.name, text, gradeOptions);
+                                if (partialMatch) {
+                                    foundGrade = partialMatch.grade;
+                                    foundCode = partialMatch.code;
+                                    console.log(`✅ Partial match found: ${foundGrade}`);
+                                }
+                            }
+                            
+                            // Strategy 3: Look for course code match
+                            if (!foundGrade) {
+                                const codeMatch = findSubjectGradeByCode(predefinedSubject.name, text, gradeOptions);
+                                if (codeMatch) {
+                                    foundGrade = codeMatch.grade;
+                                    foundCode = codeMatch.code;
+                                    console.log(`✅ Code match found: ${foundGrade}`);
+                                }
+                            }
+                            
+                            // Strategy 4: Predictive matching using similarity
+                            if (!foundGrade) {
+                                const predictiveMatch = findSubjectGradeBySimilarity(predefinedSubject.name, text, gradeOptions);
+                                if (predictiveMatch) {
+                                    foundGrade = predictiveMatch.grade;
+                                    foundCode = predictiveMatch.code;
+                                    console.log(`✅ Predictive match found: ${foundGrade}`);
+                                }
+                            }
+                            
+                            // Add the subject with found grade (or null if not found)
+                            subjects.push({
+                                name: predefinedSubject.name,
+                                grade: foundGrade || 'N/A',
+                                code: foundCode || 'N/A'
+                            });
+                            
+                            console.log(`📝 Added subject: "${predefinedSubject.name}" - Grade: ${foundGrade || 'N/A'}`);
+                            
+                        } catch (subjectError) {
+                            console.error(`❌ Error processing predefined subject:`, subjectError);
+                            // Add subject with no grade if there's an error
+                            subjects.push({
+                                name: predefinedSubject.name,
+                                grade: 'N/A',
+                                code: 'N/A'
+                            });
+                        }
+                    }
+                } else {
+                    console.warn(`⚠️ Could not find predefined subjects for semester ${semester}`);
+                }
+                
+                console.log(`📝 Final subjects count: ${subjects.length}`);
+                return { semester, subjects };
+            }
+
+            // Extract structured entries (subject, code, grade, credits) from raw text
+            function extractEntriesFromRawText(raw) {
+                const entries = [];
+                console.log('🔍 Extracting from raw text:', raw);
+
+                // Look for course lines with pattern: SUBJECT NAME CODE GRADE CREDITS
+                // More aggressive pattern matching for KTU grade cards
+                const coursePattern = /([A-Z\s,&]+?)\s+([A-Z]{3}\d{3})\s+([A-Z]\+?|S|P)\s+([\d\.]+)\s+/g;
+                
+                let match;
+                while ((match = coursePattern.exec(raw)) !== null) {
+                    const subject = match[1].replace(/\s+/g, ' ').trim();
+                    const code = match[2].toUpperCase();
+                    const grade = match[3].toUpperCase();
+                    const credits = match[4];
+                    
+                    // Skip if subject is too short or contains only common words
+                    if (subject.length > 3 && !subject.match(/^(Name|Code|Grade|Credits|Month|Year|Total|SGPA)$/i)) {
+                        entries.push({ subject, code, grade, credits });
+                        console.log(`✅ Extracted: ${subject} | ${code} | ${grade} | ${credits}`);
+                    }
+                }
+
+                // Fallback: try line-by-line with more flexible patterns
+                if (entries.length === 0) {
+                    console.log('🔄 Using fallback extraction...');
+                    const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 10);
+                    
+                    for (const line of lines) {
+                        // Look for patterns like: "VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS MAT102 B 4.0 May 2024"
+                        const flexPattern = /^([A-Z\s,&]+?)\s+([A-Z]{3}\d{3})\s+([A-Z]\+?|S|P)\s+([\d\.]+)/i;
+                        const m = line.match(flexPattern);
+                        
+                        if (m) {
+                            const subject = m[1].replace(/\s+/g, ' ').trim();
+                            const code = m[2].toUpperCase();
+                            const grade = m[3].toUpperCase();
+                            const credits = m[4];
+                            
+                            if (subject.length > 3) {
+                                entries.push({ subject, code, grade, credits });
+                                console.log(`✅ Fallback extracted: ${subject} | ${code} | ${grade} | ${credits}`);
+                            }
+                        }
+                    }
+                }
+
+                console.log(`📊 Total entries extracted: ${entries.length}`);
+                return entries;
+            }
+
+            // Normalize course/subject names consistently
+            function normalizeCourseName(s) {
+                if (!s) return '';
+                // lowercase, remove punctuation (but keep numbers/letters), collapse spaces
+                return s.toString().toLowerCase()
+                    .replace(/[\u2013\u2014\-–—|\/\\()\[\],:;\.]/g, ' ')
+                    .replace(/[^a-z0-9\s]/g, ' ')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+            }
+
+            // Create a comprehensive subject mapping for better matches
+            function createSubjectMapping() {
+                const mapping = new Map();
+                
+                // Common KTU subject mappings (extracted subject -> normalized key)
+                const commonMappings = {
+                    'VECTOR CALCULUS DIFFERENTIAL EQUATIONS AND TRANSFORMS': 'vector calculus differential equations transforms',
+                    'VECTOR CALCULUS, DIFFERENTIAL EQUATIONS AND TRANSFORMS': 'vector calculus differential equations transforms',
+                    'ENGINEERING CHEMISTRY': 'engineering chemistry',
+                    'ENGINEERING MECHANICS': 'engineering mechanics',
+                    'BASICS OF CIVIL AND MECHANICAL ENGINEERING': 'basics civil mechanical engineering',
+                    'PROFESSIONAL COMMUNICATION': 'professional communication',
+                    'PROGRAMMING IN C': 'programming c',
+                    'ENGINEERING CHEMISTRY LAB': 'engineering chemistry lab',
+                    'CIVIL AND MECHANICAL WORKSHOP': 'civil mechanical workshop',
+                    'ENGINEERING PHYSICS': 'engineering physics',
+                    'ENGINEERING GRAPHICS': 'engineering graphics',
+                    'BASICS OF ELECTRICAL AND ELECTRONICS ENGINEERING': 'basics electrical electronics engineering',
+                    'ELECTRICAL AND ELECTRONICS WORKSHOP': 'electrical electronics workshop',
+                    'LIFE SKILLS': 'life skills'
+                };
+                
+                for (const [key, value] of Object.entries(commonMappings)) {
+                    mapping.set(key, value);
+                }
+                
+                return mapping;
+            }
+
+            // Improved matching function
+            function findBestMatch(extractedEntry, uiSubjects) {
+                console.log(`🔍 Finding match for: "${extractedEntry.subject}" (${extractedEntry.code})`);
+                
+                const mapping = createSubjectMapping();
+                const extractedNorm = normalizeCourseName(extractedEntry.subject);
+                const extractedCode = extractedEntry.code.replace(/\s+/g, '');
+                
+                // Strategy 1: Exact code match
+                for (let i = 0; i < uiSubjects.length; i++) {
+                    const uiCode = (uiSubjects[i].code || '').toString().replace(/\s+/g, '');
+                    if (uiCode && extractedCode && uiCode === extractedCode) {
+                        console.log(`✅ Code match: ${uiCode}`);
+                        return { index: i, type: 'code', confidence: 1.0 };
+                    }
+                }
+                
+                // Strategy 2: Direct mapping lookup
+                const mappedKey = mapping.get(extractedEntry.subject.toUpperCase());
+                if (mappedKey) {
+                    for (let i = 0; i < uiSubjects.length; i++) {
+                        const uiNorm = normalizeCourseName(uiSubjects[i].name);
+                        if (uiNorm.includes(mappedKey) || mappedKey.includes(uiNorm)) {
+                            console.log(`✅ Mapping match: ${mappedKey} -> ${uiSubjects[i].name}`);
+                            return { index: i, type: 'mapping', confidence: 0.95 };
+                        }
+                    }
+                }
+                
+                // Strategy 3: Keyword-based matching
+                const extractedWords = extractedNorm.split(/\s+/).filter(w => w.length > 2);
+                let bestMatch = { index: -1, score: 0, type: 'none' };
+                
+                for (let i = 0; i < uiSubjects.length; i++) {
+                    const uiNorm = normalizeCourseName(uiSubjects[i].name);
+                    const uiWords = uiNorm.split(/\s+/).filter(w => w.length > 2);
+                    
+                    // Count matching words
+                    let matchingWords = 0;
+                    let totalWords = Math.max(extractedWords.length, uiWords.length);
+                    
+                    for (const word of extractedWords) {
+                        if (uiWords.includes(word)) {
+                            matchingWords++;
+                        }
+                    }
+                    
+                    const score = matchingWords / totalWords;
+                    
+                    // Special bonus for key terms
+                    let bonus = 0;
+                    if (extractedNorm.includes('chemistry') && uiNorm.includes('chemistry')) bonus += 0.2;
+                    if (extractedNorm.includes('mechanics') && uiNorm.includes('mechanics')) bonus += 0.2;
+                    if (extractedNorm.includes('programming') && uiNorm.includes('programming')) bonus += 0.2;
+                    if (extractedNorm.includes('vector') && uiNorm.includes('vector')) bonus += 0.2;
+                    if (extractedNorm.includes('calculus') && uiNorm.includes('calculus')) bonus += 0.2;
+                    if (extractedNorm.includes('workshop') && uiNorm.includes('workshop')) bonus += 0.2;
+                    if (extractedNorm.includes('lab') && uiNorm.includes('lab')) bonus += 0.2;
+                    
+                    const finalScore = Math.min(1.0, score + bonus);
+                    
+                    if (finalScore > bestMatch.score) {
+                        bestMatch = { index: i, score: finalScore, type: 'keyword' };
+                    }
+                    
+                    console.log(`  Checking "${uiSubjects[i].name}": score=${finalScore.toFixed(2)}`);
+                }
+                
+                if (bestMatch.score >= 0.4) {
+                    console.log(`✅ Keyword match: ${uiSubjects[bestMatch.index].name} (score: ${bestMatch.score.toFixed(2)})`);
+                    return { index: bestMatch.index, type: bestMatch.type, confidence: bestMatch.score };
+                }
+                
+                console.log(`❌ No match found for: ${extractedEntry.subject}`);
+                return { index: -1, type: 'none', confidence: 0 };
+            }
+
+            // Split alternative names like "A / B" into candidates
+            function splitAlternatives(name) {
+                if (!name) return [''];
+                // Split on slash, pipe, hyphen variants, or ' / '
+                return name.split(/\s*[\/|\u2013\u2014\-]\s*/).map(s => normalizeCourseName(s)).filter(Boolean);
+            }
+
+            // Word-level Jaccard (set intersection over union)
+            function wordJaccard(a, b) {
+                if (!a || !b) return 0;
+                const as = a.split(/\s+/).filter(Boolean);
+                const bs = b.split(/\s+/).filter(Boolean);
+                const aset = new Set(as);
+                const bset = new Set(bs);
+                let inter = 0;
+                for (const w of aset) if (bset.has(w)) inter++;
+                const union = new Set([...aset, ...bset]).size;
+                return union === 0 ? 0 : inter / union;
+            }
+
+            // Combined similarity: average of Dice bigram and word Jaccard (gives robust results)
+            function stringSimilarity(a, b) {
+                if (!a || !b) return 0;
+                const A = a.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+                const B = b.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (!A || !B) return 0;
+                if (A === B) return 1;
+
+                // Dice's coefficient on bigrams
+                function bigramDice(x, y) {
+                    if (x.length < 2 || y.length < 2) return 0;
+                    const map = new Map();
+                    for (let i = 0; i < x.length - 1; i++) { const g = x.substring(i, i+2); map.set(g, (map.get(g) || 0) + 1); }
+                    let inter = 0;
+                    for (let i = 0; i < y.length - 1; i++) { const g = y.substring(i, i+2); const c = map.get(g) || 0; if (c > 0) { inter++; map.set(g, c-1); } }
+                    const total = (x.length - 1) + (y.length - 1);
+                    return total > 0 ? (2.0 * inter) / total : 0;
+                }
+
+                const bigram = bigramDice(A, B);
+                const jacc = wordJaccard(a.toString().toLowerCase(), b.toString().toLowerCase());
+                // Weighted average — give slightly more weight to word overlap
+                return Math.max(bigram, jacc * 0.95);
+            }
+
+            // Autofill UI grade selects using parsed entries
+            // Options: { fuzzy: boolean, threshold: 0..1 }
+            function autofillUsingEntries(entries, detectedSemester, options = {}) {
+                if (!entries || entries.length === 0) return 0;
+                const fuzzy = !!options.fuzzy;
+                const threshold = typeof options.threshold === 'number' ? options.threshold : 0.85;
+
+                // Determine UI semester index from detectedSemester (semester numbers are 1-based)
+                let uiSemIndex = 0;
+                if (detectedSemester) {
+                    const n = parseInt(detectedSemester, 10);
+                    if (!isNaN(n) && n > 0 && n <= semesters.length) uiSemIndex = n - 1;
+                }
+
+                // Use the currently loaded UI semesters (the global `semesters` variable)
+                const uiSubjects = (semesters[uiSemIndex] && semesters[uiSemIndex].subjects) ? semesters[uiSemIndex].subjects : [];
+
+                let applied = 0;
+
+                function normalizeName(s) {
+                    return (s || '').toString().toLowerCase().replace(/[^a-z0-9\s]/g, ' ').replace(/\s+/g, ' ').trim();
+                }
+
+                for (const entry of entries) {
+                    console.log(`\n🔍 Processing entry: ${entry.subject} (${entry.code}) -> ${entry.grade}`);
+                    
+                    const match = findBestMatch(entry, uiSubjects);
+                    
+                    if (match.index >= 0 && match.confidence >= 0.4 && gradeOptions.includes(entry.grade)) {
+                        const select = document.getElementById(`sem-${uiSemIndex}-sub-${match.index}`);
+                        if (select) {
+                            console.log(`✅ Applying ${entry.grade} to ${uiSubjects[match.index].name}`);
+                            select.value = entry.grade;
+                            select.dispatchEvent(new Event('change', { bubbles: true }));
+                            applied++;
+                        }
+                    } else {
+                        console.log(`❌ Skipped: ${entry.subject} (confidence: ${match.confidence})`);
+                    }
+                }
+
+                return applied;
+            }
+        }
 });

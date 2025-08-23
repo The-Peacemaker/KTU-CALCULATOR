@@ -69,6 +69,17 @@
                     </div>
                     <div class="text-sm text-gray-400">Subjects will update based on the selected department (embedded snapshot).</div>
                 </div>
+                <!-- Ultimate AI Feature: Modern File Upload -->
+                <div class="ai-upload-section bg-gray-900 p-6 rounded-xl shadow-lg mb-8">
+                    <h2 class="text-xl font-bold text-cyan-400 mb-4">Upload Your Results</h2>
+                    <div class="upload-box flex flex-col items-center justify-center border-2 border-dashed border-cyan-500 rounded-lg p-6 cursor-pointer transition hover:border-cyan-300" id="uploadBox">
+                        <input type="file" id="resultFiles" name="resultFiles" accept="image/*,.pdf" multiple style="display:none;">
+                        <button type="button" id="uploadBtn" class="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 px-4 rounded-lg mb-2 transition">Upload Images/PDFs</button>
+                        <p class="text-gray-400 mb-2">Drag & drop files here or click to select</p>
+                        <div id="filePreview" class="file-preview flex flex-wrap gap-4"></div>
+                    </div>
+                    <div id="aiStatus" class="ai-status mt-4 text-cyan-300"></div>
+                </div>
                 <div id="semesters-container" class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Semester cards will be injected here -->
                 </div>
@@ -120,6 +131,10 @@
         </footer>
     </div>
 
+
+    <!-- AI OCR & PDF Parsing Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <script src="main.js"></script>
 </body>
 </html>
